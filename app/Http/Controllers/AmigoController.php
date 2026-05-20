@@ -44,8 +44,10 @@ class AmigoController extends Controller
         $passeios = collect();
         $malas = collect();
         if ($viagem) {
-            $passeios = \App\Models\Passeio::where('viagem_id', $amigo->viagem_id)->get();
-            // Buscar todas as malas das pessoas da viagem
+            // Buscar todos os passeios dos itinerários da viagem
+            $passeios = $viagem->itinerarios->flatMap(function($itinerario) {
+                return $itinerario->passeios;
+            });
             $malas = $viagem->malas;
         }
         return view('pages.amigos.edit', compact('amigo', 'passeios', 'malas'));
