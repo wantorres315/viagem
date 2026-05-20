@@ -3,15 +3,17 @@
 <div class="bg-white p-6 rounded-xl shadow">
     <h2 class="text-xl font-bold mb-2">Itinerário da Viagem</h2>
     <p><strong>Nome:</strong> {{ $viagem->nome }}</p>
-    <p><strong>Data:</strong> {{ $viagem->data_ida }} até {{ $viagem->data_volta }}</p>
+    <p><strong>Data:</strong> {{ \Carbon\Carbon::parse($viagem->data_ida)->format('d/m/Y') }} até {{ \Carbon\Carbon::parse($viagem->data_volta)->format('d/m/Y') }}</p>
     <hr class="my-4">
     <h3 class="font-semibold text-lg mb-2">Itinerário e Passeios</h3>
     @foreach($viagem->itinerarios as $itinerario)
         <div class="mb-2">
-            <strong>{{ $itinerario->data }}</strong>
+            <div style="background:#e3f2fd; color:#1565c0; padding:6px 12px; border-radius:6px; font-weight:bold; margin-bottom:4px;">
+                {{ \Carbon\Carbon::parse($itinerario->data)->format('d/m/Y') }}
+            </div>
             <ul class="ml-4 list-disc">
                 @foreach($itinerario->passeios as $passeio)
-                    <li>
+                    <li class="mb-2 pb-2">
                         {{ $passeio->nome }}
                         @if($passeio->pessoas && count($passeio->pessoas))
                             <ul class="ml-4 list-square text-sm">
@@ -20,6 +22,7 @@
                                 @endforeach
                             </ul>
                         @endif
+                        <hr class="my-2" style="border-top:1px solid #bbb;">
                     </li>
                 @endforeach
             </ul>
