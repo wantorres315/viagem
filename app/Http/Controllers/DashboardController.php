@@ -28,6 +28,7 @@ class DashboardController extends Controller
         $viagemAtual = Viagem::where('user_id', auth()->id())
             ->where('data_ida', '>=', now()->toDateString())
             ->orderBy('data_ida')
+            ->with(['itinerarios.passeios.pessoas', 'pessoas'])
             ->first();
 
         $labels = [];

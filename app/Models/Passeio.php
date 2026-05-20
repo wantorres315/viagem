@@ -14,6 +14,9 @@ class Passeio extends Model
         'valor_adulto',
         'valor_crianca',
     ];
-
+      public function pessoas()
+    {
+        return $this->belongsToMany(\App\Models\Pessoa::class, 'passeio_pessoas', 'passeio_id', 'pessoa_id')->withPivot('valor', 'data');
+    }
     
 }

@@ -13,10 +13,10 @@
                 @foreach($itinerario->passeios as $passeio)
                     <li>
                         {{ $passeio->nome }}
-                        @if($passeio->amigos && count($passeio->amigos))
+                        @if($passeio->pessoas && count($passeio->pessoas))
                             <ul class="ml-4 list-square text-sm">
-                                @foreach($passeio->amigos as $amigo)
-                                    <li>{{ $amigo->nome }}</li>
+                                @foreach($passeio->pessoas as $pessoa)
+                                    <li>{{ $pessoa->nome }}</li>
                                 @endforeach
                             </ul>
                         @endif
