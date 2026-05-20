@@ -146,7 +146,7 @@ class MinhaViagemController extends Controller
                 }
             }
         }
-        return redirect()->route('minha-viagem.index')->with('success', 'Viagem atualizada com sucesso!');
+        return redirect()->route('minha-viagem.edit', $viagemId)->with('success', 'Viagem atualizada com sucesso!');
     }
 
     public function destroy($viagemId)
