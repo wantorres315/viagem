@@ -27,7 +27,7 @@ class AmigoController extends Controller
             'viagem_id' => 'required|exists:viagens,id',
         ]);
         $amigo = Amigo::create($data);
-        return redirect()->route('amigo.edit', $amigo->id)->with('success', 'Amigo criado!');
+        return redirect()->route('amigo.index')->with('success', 'Amigo criado!');
     }
 
     public function edit($amigoId)
