@@ -62,6 +62,10 @@ class AmigoController extends Controller
         ]);
         $amigo->update($data);
 
+        // Sincronizar passeios
+        $passeiosSelecionados = $request->input('passeios', []);
+        $amigo->passeios()->sync($passeiosSelecionados);
+
         // Sincronizar presentes
         $presentesInput = $request->input('presentes', []);
         $idsMantidos = [];
