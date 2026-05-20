@@ -33,24 +33,31 @@ class DashboardController extends Controller
 
         $labels = [];
         $valores = [];
-        $pessoas = $viagemAtual->pessoas;
-        $numAdultos = $pessoas->where('idade', '>=', 12)->count();
-        $numCriancas = $pessoas->where('idade', '<', 12)->count();
-
+        $numAdultos = 0;
+        $numCriancas = 0;
         $gastoTotal = 0;
-        foreach($viagemAtual->itinerarios as $itinerario) {
-            $labels[] = $itinerario->data;
-            $valorTotal = 0;
-            foreach ($itinerario->passeios as $passeio) {
-                $valorTotal += ($passeio->valor_adulto ?? 0) * $numAdultos;
-                $valorTotal += ($passeio->valor_crianca ?? 0) * $numCriancas;
-            }
-            $valores[] = $valorTotal;
-            $gastoTotal += $valorTotal;
-        }
+        $budget = 0;
+        $restante = 0;
 
-        $budget = $viagemAtual->budget ?? 0;
-        $restante = $budget - $gastoTotal;
+        if ($viagemAtual) {
+            $pessoas = $viagemAtual->pessoas;
+            $numAdultos = $pessoas->where('idade', '>=', 12)->count();
+            $numCriancas = $pessoas->where('idade', '<', 12)->count();
+
+            foreach($viagemAtual->itinerarios as $itinerario) {
+                $labels[] = $itinerario->data;
+                $valorTotal = 0;
+                foreach ($itinerario->passeios as $passeio) {
+                    $valorTotal += ($passeio->valor_adulto ?? 0) * $numAdultos;
+                    $valorTotal += ($passeio->valor_crianca ?? 0) * $numCriancas;
+                }
+                $valores[] = $valorTotal;
+                $gastoTotal += $valorTotal;
+            }
+
+            $budget = $viagemAtual->budget ?? 0;
+            $restante = $budget - $gastoTotal;
+        }
 
         // Última viagem do usuário (mais recente, já realizada ou futura)
         $ultimaViagem = Viagem::where('user_id', auth()->id())

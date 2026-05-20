@@ -17,7 +17,15 @@
       @include('components.ecommerce.monthly-target')
     </div>
 
-    
+    {{-- Mensagem caso não haja viagem futura cadastrada --}}
+    @if(empty($labels) || count($labels) === 0)
+      <div class="col-span-12">
+        <div class="rounded-2xl border border-yellow-200 bg-yellow-50 p-5 sm:p-6 text-center">
+          <h3 class="text-lg font-semibold text-yellow-800 mb-2">Nenhuma viagem futura cadastrada</h3>
+          <p class="text-yellow-700">Cadastre uma nova viagem para visualizar os dados do dashboard.</p>
+        </div>
+      </div>
+    @endif
 
     <div class="col-span-12 xl:col-span-12">
         <div class="rounded-2xl border border-gray-200 bg-white p-5 sm:p-6">
