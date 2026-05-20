@@ -19,7 +19,7 @@ class MinhaViagemController extends Controller
 
     public function edit($viagemId)
     {
-        $viagem = auth()->user()->viagens()->with(['itinerarios.passeios'])->findOrFail($viagemId);
+        $viagem = auth()->user()->viagens()->with(['itinerarios.passeios', 'destinos.voo'])->findOrFail($viagemId);
         return view('pages.minha-viagem.edit', compact('viagem'));
     }
 

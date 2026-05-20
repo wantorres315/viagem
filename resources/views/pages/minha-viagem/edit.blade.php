@@ -124,7 +124,20 @@
                     </div>
                     <div id="destinos-list" class="space-y-3">
                         @php
-                            $destinosOld = old('destinos', isset($viagem) ? $viagem->destinos->toArray() : []);
+                            $destinosOld = old('destinos');
+                            if (!$destinosOld && isset($viagem)) {
+                                $destinosOld = $viagem->destinos->map(function($destino) {
+                                    $arr = $destino->toArray();
+                                    if ($destino->voo) {
+                                        $arr['voo'] = [
+                                            'numero_voo' => $destino->voo->numero_voo ?? '',
+                                            'ida_volta' => $destino->voo->ida_volta ?? '',
+                                            'assento' => $destino->voo->assento ?? '',
+                                        ];
+                                    }
+                                    return $arr;
+                                })->toArray();
+                            }
                         @endphp
                         @foreach($destinosOld as $i => $destino)
                             <div class="rounded-xl border border-gray-200 bg-gray-50 p-4 flex flex-col md:flex-row md:items-end gap-4 destino-item relative shadow-sm">
