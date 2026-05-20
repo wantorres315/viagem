@@ -43,9 +43,7 @@
         @foreach($countriesList as $country)
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-3">
-                    <div class="w-full max-w-8 items-center rounded-full">
-                        <img src="{{ $country['flag'] }}" alt="{{ strtolower($country['name']) }}" />
-                    </div>
+                    <!-- Bandeira removida, só nome -->
                     <div>
                         <p class="text-theme-sm font-semibold text-gray-800">
                             {{ $country['name'] }}

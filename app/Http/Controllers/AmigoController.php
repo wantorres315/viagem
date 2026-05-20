@@ -15,7 +15,8 @@ class AmigoController extends Controller
 
     public function create()
     {
-        return view('pages.amigos.create');
+        $viagens = \App\Models\Viagem::all();
+        return view('pages.amigos.create', compact('viagens'));
     }
 
     public function store(Request $request)
@@ -23,6 +24,7 @@ class AmigoController extends Controller
         $data = $request->validate([
             'nome' => 'required|string|max:255',
             'cidade' => 'nullable|string|max:255',
+            'viagem_id' => 'required|exists:viagens,id',
         ]);
         $amigo = Amigo::create($data);
         return redirect()->route('amigo.edit', $amigo->id)->with('success', 'Amigo criado!');
@@ -40,10 +42,13 @@ class AmigoController extends Controller
         }
 
         $passeios = collect();
+        $malas = collect();
         if ($viagem) {
-            $passeios = \App\Models\Passeio::whereIn('itinerario_id', $viagem->itinerarios->pluck('id'))->get();
+            $passeios = \App\Models\Passeio::where('viagem_id', $amigo->viagem_id)->get();
+            // Buscar todas as malas das pessoas da viagem
+            $malas = $viagem->malas;
         }
-        return view('pages.amigos.edit', compact('amigo', 'passeios'));
+        return view('pages.amigos.edit', compact('amigo', 'passeios', 'malas'));
     }
 
     public function update(Request $request, $amigoId)
@@ -52,10 +57,42 @@ class AmigoController extends Controller
         $data = $request->validate([
             'nome' => 'required|string|max:255',
             'cidade' => 'nullable|string|max:255',
-            // presentes e passeios depois
         ]);
         $amigo->update($data);
-        // salvar presentes e passeios depois
+
+        // Sincronizar presentes
+        $presentesInput = $request->input('presentes', []);
+        $idsMantidos = [];
+        foreach ($presentesInput as $i => $presenteData) {
+            if (isset($presenteData['id'])) {
+                // Atualizar existente
+                $presente = $amigo->presentes()->find($presenteData['id']);
+                if ($presente) {
+                    $presente->update([
+                        'presente' => $presenteData['descricao'],
+                        'mala_id' => $presenteData['mala_id'],
+                    ]);
+                    $idsMantidos[] = $presente->id;
+                }
+            } else {
+                // Criar novo
+                $novo = $amigo->presentes()->create([
+                    'presente' => $presenteData['descricao'],
+                    'mala_id' => $presenteData['mala_id'],
+                ]);
+                $idsMantidos[] = $novo->id;
+            }
+        }
+        // Remover presentes que não estão mais
+        $amigo->presentes()->whereNotIn('id', $idsMantidos)->delete();
+
         return redirect()->route('amigo.edit', $amigo->id)->with('success', 'Amigo atualizado!');
+    }
+
+    public function destroy($amigoId)
+    {
+        $amigo = Amigo::findOrFail($amigoId);
+        $amigo->delete();
+        return redirect()->route('amigo.index')->with('success', 'Amigo deletado!');
     }
 }

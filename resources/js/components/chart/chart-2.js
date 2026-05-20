@@ -4,7 +4,7 @@ export const initChartTwo = () => {
 
     if (chartElement) {
         const chartTwoOptions = {
-            series: [75.55],
+            series: [window.percentualGasto ?? 0],
             colors: ["#465FFF"],
             chart: {
                 fontFamily: "Outfit, sans-serif",

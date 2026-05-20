@@ -12,7 +12,12 @@ class Amigo extends Model
     protected $fillable = [
         'nome',
         'cidade',
+        'viagem_id',
     ];
+    public function viagem()
+    {
+        return $this->belongsTo(Viagem::class);
+    }
 
     public function presentes()
     {

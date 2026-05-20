@@ -19,6 +19,7 @@
                     <th class="px-4 py-2">Data de Ida</th>
                     <th class="px-4 py-2">Data de Volta</th>
                     <th class="px-4 py-2">Qtd. Pessoas</th>
+                    <th class="px-4 py-2">Budget (R$)</th>
                     <th class="px-4 py-2">Ações</th>
                 </tr>
             </thead>
@@ -29,6 +30,7 @@
                         <td class="border px-4 py-2">{{ \Carbon\Carbon::parse($viagem->data_ida)->format('d/m/Y') }}</td>
                         <td class="border px-4 py-2">{{ \Carbon\Carbon::parse($viagem->data_volta)->format('d/m/Y') }}</td>
                         <td class="border px-4 py-2">{{ $viagem->pessoas->count() }}</td>
+                        <td class="border px-4 py-2">{{ $viagem->budget ?  number_format($viagem->budget, 2, ',', '.') : '-' }}</td>
                         <td class="border px-4 py-2">
                             <a href="{{ route('minha-viagem.edit', $viagem->id) }}" class="btn btn-sm btn-warning" title="Editar">
                                 <i class="bi bi-pencil"></i>

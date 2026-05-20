@@ -4,11 +4,12 @@ export const initChartOne = () => {
     const chartElement = document.querySelector('#chartOne');
     if (!chartElement) return;
 
+
     const chartOneOptions = {
         series: [{
-            name: "Sales",
-            data: [168, 385, 201, 298, 187, 195, 291, 110, 215, 390, 280, 112],
-        },],
+            name: "Gastos",
+            data: window.chartValores || [],
+        }],
         colors: ["#465fff"],
         chart: {
             fontFamily: "Outfit, sans-serif",
@@ -35,20 +36,7 @@ export const initChartOne = () => {
             colors: ["transparent"],
         },
         xaxis: {
-            categories: [
-                "Jan",
-                "Feb",
-                "Mar",
-                "Apr",
-                "May",
-                "Jun",
-                "Jul",
-                "Aug",
-                "Sep",
-                "Oct",
-                "Nov",
-                "Dec",
-            ],
+            categories: window.chartLabels || [],
             axisBorder: {
                 show: false,
             },

@@ -13,6 +13,8 @@ class Itinerario extends Model
         'nome',
         'descricao',
         'data',
+        'viagem_id',
+        'passeio_id',
         // Adicione outros campos conforme necessário
     ];
 

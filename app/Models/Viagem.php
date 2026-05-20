@@ -14,6 +14,7 @@ class Viagem extends Model
         'nome',
         'data_ida',
         'data_volta',
+        'budget',
     ];
 
     // Relacionamento: cada viagem pertence a um usuário
@@ -37,5 +38,15 @@ class Viagem extends Model
     public function itinerarios()
     {
         return $this->hasMany(Itinerario::class);
+    }
+
+    public function malas()
+    {
+        return $this->hasMany(Mala::class);
+    }
+
+    public function amigos()
+    {
+        return $this->hasMany(Amigo::class);
     }
 }

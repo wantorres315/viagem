@@ -23,11 +23,16 @@
                             <div class="rounded-xl border border-gray-200 bg-gray-50 p-4 flex flex-row items-end gap-4 presente-item relative shadow-sm">
                                 <div class="flex-1">
                                     <label class="block text-xs font-medium text-gray-600 mb-1">Descrição</label>
-                                    <input type="text" name="presentes[{{ $i }}][descricao]" class="form-control w-full" placeholder="Descrição do presente" value="{{ $presente->descricao }}" required />
+                                    <input type="text" name="presentes[{{ $i }}][descricao]" class="form-control w-full" placeholder="Descrição do presente" value="{{ $presente->presente }}" required />
                                 </div>
-                                <div class="w-32">
-                                    <label class="block text-xs font-medium text-gray-600 mb-1">Valor</label>
-                                    <input type="number" step="0.01" name="presentes[{{ $i }}][valor]" class="form-control w-full" placeholder="Valor" value="{{ $presente->valor }}" />
+                                <div class="w-48">
+                                    <label class="block text-xs font-medium text-gray-600 mb-1">Mala</label>
+                                    <select name="presentes[{{ $i }}][mala_id]" class="form-control w-full" required>
+                                        <option value="">Selecione a mala</option>
+                                        @foreach($malas as $mala)
+                                            <option value="{{ $mala->id }}" {{ isset($presente->mala_id) && $presente->mala_id == $mala->id ? 'selected' : '' }}>{{ $mala->descricao }}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
                                 <button type="button" class="btn btn-danger btn-sm remove-presente ml-2" title="Remover presente">
                                     <i class="bi bi-x-lg"></i>
@@ -77,9 +82,14 @@
                     <label class=\"block text-xs font-medium text-gray-600 mb-1\">Descrição</label>
                     <input type=\"text\" name=\"presentes[${presenteIndex}][descricao]\" class=\"form-control w-full\" placeholder=\"Descrição do presente\" required />
                 </div>
-                <div class=\"w-32\">
-                    <label class=\"block text-xs font-medium text-gray-600 mb-1\">Valor</label>
-                    <input type=\"number\" step=\"0.01\" name=\"presentes[${presenteIndex}][valor]\" class=\"form-control w-full\" placeholder=\"Valor\" />
+                <div class=\"w-48\">
+                    <label class=\"block text-xs font-medium text-gray-600 mb-1\">Mala</label>
+                    <select name=\"presentes[${presenteIndex}][mala_id]\" class=\"form-control w-full\" required>
+                        <option value=\"\">Selecione a mala</option>
+                        @foreach($malas as $mala)
+                            <option value=\"{{ $mala->id }}\">{{ $mala->descricao }}</option>
+                        @endforeach
+                    </select>
                 </div>
                 <button type=\"button\" class=\"btn btn-danger btn-sm remove-presente ml-2\" title=\"Remover presente\"><i class=\"bi bi-x-lg\"></i></button>
             `;

@@ -6,14 +6,11 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MinhaViagemController;
 use App\Http\Controllers\MalaController;
 use App\Http\Controllers\AmigoController;
+use App\Http\Controllers\RelatorioViagemController;
 
 Route::get('/', function () {
     return view('auth.login');
 });
-
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get("/dashboard", [DashboardController::class, 'index'])->name('dashboard');
@@ -45,7 +42,19 @@ Route::middleware('auth')->group(function () {
         Route::put('/{amigo}', 'update')->name('amigo.update');
         Route::delete('/{amigo}', 'destroy')->name('amigo.destroy');
     });
-    
-    });
+    // Checklist da Viagem
+    Route::get('/checklist', [\App\Http\Controllers\ChecklistViagemController::class, 'index'])->name('checklist.index');
+    Route::post('/checklist', [\App\Http\Controllers\ChecklistViagemController::class, 'store'])->name('checklist.store');
+    Route::put('/checklist/{id}', [\App\Http\Controllers\ChecklistViagemController::class, 'update'])->name('checklist.update');
+    Route::delete('/checklist/{id}', [\App\Http\Controllers\ChecklistViagemController::class, 'destroy'])->name('checklist.destroy');
+
+    // PATCH para AJAX do dashboard
+    Route::patch('/dashboard/checklist/{id}', [\App\Http\Controllers\ChecklistViagemController::class, 'toggleConcluido'])->name('dashboard.checklist.toggle');
+
+    Route::get('/impressao_viagem', [RelatorioViagemController::class, 'index'])->name('relatorio.viagem');
+    Route::get('/relatorio-viagem/pdf', [RelatorioViagemController::class, 'pdf'])->name('relatorio.viagem.pdf');
+    Route::get('/relatorio-viagem/itinerario-pdf', [RelatorioViagemController::class, 'itinerarioPdf'])->name('relatorio.viagem.itinerario.pdf');
+
+});
 
 require __DIR__.'/auth.php';

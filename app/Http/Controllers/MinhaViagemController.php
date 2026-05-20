@@ -19,7 +19,7 @@ class MinhaViagemController extends Controller
 
     public function edit($viagemId)
     {
-        $viagem = auth()->user()->viagens()->findOrFail($viagemId);
+        $viagem = auth()->user()->viagens()->with(['itinerarios.passeios'])->findOrFail($viagemId);
         return view('pages.minha-viagem.edit', compact('viagem'));
     }
 
@@ -30,6 +30,7 @@ class MinhaViagemController extends Controller
             'nome' => 'required|string|max:255',
             'data_ida' => 'required|date',
             'data_volta' => 'required|date|after_or_equal:data_ida',
+            'budget' => 'nullable|numeric|min:0',
         ]);
 
         // Salva a viagem para o usuário autenticado
@@ -70,6 +71,7 @@ class MinhaViagemController extends Controller
             'nome' => 'required|string|max:255',
             'data_ida' => 'required|date',
             'data_volta' => 'required|date|after_or_equal:data_ida',
+            'budget' => 'nullable|numeric|min:0',
         ]);
         $viagem->update($data);
         // Atualizar pessoas
@@ -120,25 +122,25 @@ class MinhaViagemController extends Controller
                 // Passeios
                 if (!empty($itinerarioData['passeios'])) {
                     foreach ($itinerarioData['passeios'] as $passeioData) {
-                        $passeio = \App\Models\Passeio::create([
+                        $passeio = $itinerario->passeios()->create([
                             'nome' => $passeioData['nome'] ?? null,
                             'valor_adulto' => $passeioData['valor_adulto'] ?? null,
                             'valor_crianca' => $passeioData['valor_crianca'] ?? null,
                         ]);
                         // Para cada pessoa da viagem, cria PasseioPessoa
-                            foreach ($viagem->pessoas as $pessoa) {
-                                $valor = null;
-                                if (isset($pessoa->idade)) {
-                                    $valor = ($pessoa->idade >= 12)
-                                        ? $passeio->valor_adulto
-                                        : $passeio->valor_crianca;
-                                }
-                                \App\Models\PasseioPessoa::create([
-                                    'passeio_id' => $passeio->id,
-                                    'pessoa_id' => $pessoa->id,
-                                    'valor' => $valor,
-                                    'data' => $itinerario->data,
-                                ]);
+                        foreach ($viagem->pessoas as $pessoa) {
+                            $valor = null;
+                            if (isset($pessoa->idade)) {
+                                $valor = ($pessoa->idade >= 12)
+                                    ? $passeio->valor_adulto
+                                    : $passeio->valor_crianca;
+                            }
+                            \App\Models\PasseioPessoa::create([
+                                'passeio_id' => $passeio->id,
+                                'pessoa_id' => $pessoa->id,
+                                'valor' => $valor,
+                                'data' => $itinerario->data,
+                            ]);
                         }
                     }
                 }

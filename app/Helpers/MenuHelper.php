@@ -10,25 +10,39 @@ class MenuHelper
             [
                 'icon' => 'dashboard',
                 'name' => 'Dashboard',
-                'subItems' => [
-                    ['name' => 'Ecommerce', 'path' => '/'],
-                ],
+                 'path' => '/dashboard'
             ],
             [
                 'icon' => 'calendar',
                 'name' => 'Minha Viagem',
                 'path' => '/minha-viagem',
             ],
-             [
+            [
+                'icon' => 'checklist',
+                'name' => 'Checklist da Viagem',
+                'path' => '/checklist',
+            ],
+            [
                 'icon' => 'pages',
                 'name' => 'Malas da Viagem',
                 'path' => '/malas',
             ],
-             [
+            [
                 'icon' => 'user-profile',
                 'name' => 'Amigos / Parentes',
                 'path' => '/amigos',
             ],
+        ];
+    }
+
+    public static function getReportItems()
+    {
+        return [
+            [
+                'icon' => 'forms',
+                'name' => 'Impressao da viagem',
+                'path' => '/impressao_viagem',
+            ]
         ];
     }
 
@@ -38,6 +52,10 @@ class MenuHelper
             [
                 'title' => 'Minha viagem',
                 'items' => self::getMainNavItems()
+            ],
+            [
+                'title' => 'Relatórios',
+                'items' => self::getReportItems()
             ]
         ];
     }

@@ -15,6 +15,7 @@
                 <x-form.form-elements.input label="Nome da Viagem" name="nome" :value="old('nome', $viagem->nome ?? null)" required />
                 <x-form.form-elements.date-input label="Data de Ida" name="data_ida" :value="old('data_ida', $viagem->data_ida ?? null)" required />
                 <x-form.form-elements.date-input label="Data de Volta" name="data_volta" :value="old('data_volta', $viagem->data_volta ?? null)" required />
+                <x-form.form-elements.input label="Budget" name="budget" type="number" step="0.01" :value="old('budget', $viagem->budget ?? null)" />
                 <div class="mb-8">
                     <div class="flex items-center mb-2">
                         <i class="bi bi-list-task text-brand-500 mr-2"></i>
@@ -58,10 +59,6 @@
                                                 <div class="flex-1">
                                                     <label class="block text-xs font-medium text-gray-600 mb-1">Nome do Passeio</label>
                                                     <input type="text" name="itinerarios[{{ $i }}][passeios][{{ $j }}][nome]" class="form-control w-full" placeholder="Nome do passeio" value="{{ $passeio['nome'] ?? '' }}" required />
-                                                </div>
-                                                <div class="flex-1">
-                                                    <label class="block text-xs font-medium text-gray-600 mb-1">Horário</label>
-                                                    <input type="time" name="itinerarios[{{ $i }}][passeios][{{ $j }}][horario]" class="form-control w-full" value="{{ $passeio['horario'] ?? '' }}" />
                                                 </div>
                                                 <div class="flex-1">
                                                     <label class="block text-xs font-medium text-gray-600 mb-1">Observação</label>
@@ -232,14 +229,6 @@
                             <div class=\"flex-1\">
                                 <label class=\"block text-xs font-medium text-gray-600 mb-1\">Nome do Passeio</label>
                                 <input type=\"text\" name=\"itinerarios[${itinerarioIdx}][passeios][${passeioIndex}][nome]\" class=\"form-control w-full\" placeholder=\"Nome do passeio\" required />
-                            </div>
-                            <div class=\"flex-1\">
-                                <label class=\"block text-xs font-medium text-gray-600 mb-1\">Horário</label>
-                                <input type=\"time\" name=\"itinerarios[${itinerarioIdx}][passeios][${passeioIndex}][horario]\" class=\"form-control w-full\" />
-                            </div>
-                            <div class=\"flex-1\">
-                                <label class=\"block text-xs font-medium text-gray-600 mb-1\">Observação</label>
-                                <input type=\"text\" name=\"itinerarios[${itinerarioIdx}][passeios][${passeioIndex}][observacao]\" class=\"form-control w-full\" placeholder=\"Observação\" />
                             </div>
                             <div class=\"flex-1\">
                                 <label class=\"block text-xs font-medium text-gray-600 mb-1\">Valor Adulto (R$)</label>

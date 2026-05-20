@@ -13,12 +13,7 @@ class Passeio extends Model
         'nome',
         'valor_adulto',
         'valor_crianca',
-        'itinerario_id',
     ];
 
-    // Relacionamento: passeio pertence a um itinerário
-    public function itinerario()
-    {
-        return $this->belongsTo(\App\Models\Itinerario::class);
-    }
+    
 }
