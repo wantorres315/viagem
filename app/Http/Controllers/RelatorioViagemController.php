@@ -16,8 +16,9 @@ class RelatorioViagemController extends Controller
         if ($request->viagem_id) {
             $viagemSelecionada = Viagem::with([
                 'pessoas',
-                'itinerarios.passeios',
+                'itinerarios.passeios.amigos',
                 'amigos.presentes',
+                'amigos.passeios',
                 'malas.itens',
                 'malas.presentes'
             ])->find($request->viagem_id);
@@ -29,8 +30,9 @@ class RelatorioViagemController extends Controller
     {
         $viagem = Viagem::with([
             'pessoas',
-            'itinerarios.passeios',
+            'itinerarios.passeios.amigos',
             'amigos.presentes',
+            'amigos.passeios',
             'malas.itens',
             'malas.presentes'
         ])->findOrFail($request->viagem_id);

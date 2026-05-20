@@ -27,6 +27,12 @@
                                 </li>
                             @endforeach
                         </ul>
+                        @if($passeio->amigos && $passeio->amigos->count())
+                            <div class="mt-1 text-xs text-blue-700">
+                                <strong>Amigos neste passeio:</strong>
+                                {{ $passeio->amigos->pluck('nome')->join(', ') }}
+                            </div>
+                        @endif
                     </li>
                 @endforeach
             </ul>

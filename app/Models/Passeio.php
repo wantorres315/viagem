@@ -19,4 +19,8 @@ class Passeio extends Model
         return $this->belongsToMany(\App\Models\Pessoa::class, 'passeio_pessoas', 'passeio_id', 'pessoa_id')->withPivot('valor', 'data');
     }
     
+    public function amigos()
+    {
+        return $this->belongsToMany(Amigo::class, 'amigo_passeios');
+    }
 }
