@@ -10,10 +10,12 @@
     <h3 class="font-semibold text-lg mb-2">Itinerário e Passeios</h3>
     @foreach($viagem->itinerarios as $itinerario)
         <div class="mb-2">
-            <strong>{{ $itinerario->data }}</strong>
+            <div style="background:#e3f2fd; color:#1565c0; padding:6px 12px; border-radius:6px; font-weight:bold; margin-bottom:4px;">
+                {{ $itinerario->data }}
+            </div>
             <ul class="ml-4 list-disc">
                 @foreach($itinerario->passeios as $passeio)
-                    <li>
+                    <li class="mb-2 pb-2">
                         {{ $passeio->nome }} (Adulto: R$ {{ number_format($passeio->valor_adulto,2,',','.') }}, Criança: R$ {{ number_format($passeio->valor_crianca,2,',','.') }})
                         <ul class="ml-4 list-square text-sm">
                             @foreach($viagem->pessoas as $pessoa)
@@ -33,6 +35,7 @@
                                 {{ $passeio->amigos->pluck('nome')->join(', ') }}
                             </div>
                         @endif
+                        <hr class="my-2" style="border-top:1px solid #bbb;">
                     </li>
                 @endforeach
             </ul>
