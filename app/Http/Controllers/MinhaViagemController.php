@@ -76,34 +76,65 @@ class MinhaViagemController extends Controller
         $viagem->update($data);
         // Atualizar pessoas
         $viagem->pessoas()->delete();
-        $viagem->destinos()->delete();
+        // --- Destinos: atualizar, criar e remover corretamente ---
+        $destinosInput = $request->input('destinos', []);
+        $destinoIdsInput = collect($destinosInput)->pluck('id')->filter()->all();
+        // Remover destinos que não estão mais no input
+        $viagem->destinos()->whereNotIn('id', $destinoIdsInput)->each(function($destino) {
+            if ($destino->voo) $destino->voo->delete();
+            $destino->delete();
+        });
+
+        // Atualizar ou criar destinos
+        foreach ($destinosInput as $destinoData) {
+            if (empty($destinoData['nome']) || empty($destinoData['data'])) continue;
+            $destino = null;
+            if (!empty($destinoData['id'])) {
+                $destino = $viagem->destinos()->where('id', $destinoData['id'])->first();
+            }
+            // Voo
+            $vooData = $destinoData['voo'] ?? null;
+            $vooId = null;
+            if ($vooData && (!empty($vooData['numero_voo']) || !empty($vooData['ida_volta']) || !empty($vooData['assento']))) {
+                if ($destino && $destino->voo) {
+                    $destino->voo->update([
+                        'numero_voo' => $vooData['numero_voo'] ?? null,
+                        'ida_volta' => $vooData['ida_volta'] ?? null,
+                        'assento' => $vooData['assento'] ?? null,
+                    ]);
+                    $vooId = $destino->voo->id;
+                } else {
+                    $voo = \App\Models\Voo::create([
+                        'numero_voo' => $vooData['numero_voo'] ?? null,
+                        'ida_volta' => $vooData['ida_volta'] ?? null,
+                        'assento' => $vooData['assento'] ?? null,
+                    ]);
+                    $vooId = $voo->id;
+                }
+            } elseif ($destino && $destino->voo) {
+                // Se não tem mais dados de voo, remover voo antigo
+                $destino->voo->delete();
+                $vooId = null;
+            }
+            $destinoPayload = [
+                'nome' => $destinoData['nome'],
+                'data' => $destinoData['data'],
+                'voo_id' => $vooId,
+            ];
+            if ($destino) {
+                $destino->update($destinoPayload);
+            } else {
+                $viagem->destinos()->create($destinoPayload);
+            }
+        }
+
+        // Pessoas (depois dos destinos para manter ordem)
         if ($request->has('pessoas')) {
             foreach ($request->input('pessoas') as $pessoaData) {
                 if (!empty($pessoaData['nome']) && !empty($pessoaData['idade'])) {
                     $viagem->pessoas()->create([
                         'nome' => $pessoaData['nome'],
                         'idade' => $pessoaData['idade'],
-                    ]);
-                }
-            }
-        }
-        // Salvar destinos
-        if ($request->has('destinos')) {
-            foreach ($request->input('destinos') as $destinoData) {
-                if (!empty($destinoData['nome']) && !empty($destinoData['data'])) {
-                    $vooId = null;
-                    if (!empty($destinoData['voo']['numero_voo']) || !empty($destinoData['voo']['ida_volta']) || !empty($destinoData['voo']['assento'])) {
-                        $voo = \App\Models\Voo::create([
-                            'numero_voo' => $destinoData['voo']['numero_voo'] ?? null,
-                            'ida_volta' => $destinoData['voo']['ida_volta'] ?? null,
-                            'assento' => $destinoData['voo']['assento'] ?? null,
-                        ]);
-                        $vooId = $voo->id;
-                    }
-                    $viagem->destinos()->create([
-                        'nome' => $destinoData['nome'],
-                        'data' => $destinoData['data'],
-                        'voo_id' => $vooId,
                     ]);
                 }
             }

@@ -128,8 +128,10 @@
                             if (!$destinosOld && isset($viagem)) {
                                 $destinosOld = $viagem->destinos->map(function($destino) {
                                     $arr = $destino->toArray();
+                                    $arr['id'] = $destino->id;
                                     if ($destino->voo) {
                                         $arr['voo'] = [
+                                            'id' => $destino->voo->id ?? '',
                                             'numero_voo' => $destino->voo->numero_voo ?? '',
                                             'ida_volta' => $destino->voo->ida_volta ?? '',
                                             'assento' => $destino->voo->assento ?? '',
