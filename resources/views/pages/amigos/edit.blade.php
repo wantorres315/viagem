@@ -45,12 +45,15 @@
                         <i class="bi bi-people text-brand-500 mr-2"></i>
                         <span class="text-base font-semibold text-gray-700">Passeios com este amigo</span>
                     </div>
-                    <select name="passeios[]" class="form-control w-full" multiple>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
                         @foreach($passeios as $passeio)
-                            <option value="{{ $passeio->id }}" {{ $amigo->passeios->contains($passeio->id) ? 'selected' : '' }}>{{ $passeio->nome }}</option>
+                            <label class="inline-flex items-center space-x-2">
+                                <input type="checkbox" name="passeios[]" value="{{ $passeio->id }}" {{ $amigo->passeios->contains($passeio->id) ? 'checked' : '' }} class="form-checkbox rounded text-brand-500 focus:ring-brand-500" />
+                                <span>{{ $passeio->nome }}</span>
+                            </label>
                         @endforeach
-                    </select>
-                    <small class="text-xs text-gray-500">Segure Ctrl (Windows) ou Command (Mac) para selecionar vários.</small>
+                    </div>
+                    <small class="text-xs text-gray-500">Marque os passeios deste amigo.</small>
                 </div>
 
                 <button type="submit" class="bg-brand-500 hover:bg-brand-600 rounded-lg p-3 text-sm font-medium text-white transition-colors">Salvar Amigo</button>

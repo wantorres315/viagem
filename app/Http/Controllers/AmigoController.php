@@ -31,7 +31,18 @@ class AmigoController extends Controller
     public function edit($amigoId)
     {
         $amigo = Amigo::findOrFail($amigoId);
-        $passeios = \App\Models\Passeio::all();
+        // Find the viagem via pessoa (assuming amigo is linked to pessoa)
+        $viagem = null;
+        if (method_exists($amigo, 'pessoa') && $amigo->pessoa) {
+            $viagem = $amigo->pessoa->viagem;
+        } elseif (isset($amigo->viagem_id)) {
+            $viagem = \App\Models\Viagem::find($amigo->viagem_id);
+        }
+
+        $passeios = collect();
+        if ($viagem) {
+            $passeios = \App\Models\Passeio::whereIn('itinerario_id', $viagem->itinerarios->pluck('id'))->get();
+        }
         return view('pages.amigos.edit', compact('amigo', 'passeios'));
     }
 
