@@ -13,4 +13,14 @@ class Amigo extends Model
         'nome',
         'cidade',
     ];
+
+    public function presentes()
+    {
+        return $this->hasMany(Presente::class);
+    }
+
+    public function passeios()
+    {
+        return $this->belongsToMany(Passeio::class, 'amigo_passeios');
+    }
 }

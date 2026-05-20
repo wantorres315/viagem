@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('descricao');
             $table->foreignId('viagem_id')->constrained('viagens')->onDelete('cascade');
-            $table->string('track');
+            $table->string('track')->nullable();
             $table->decimal('peso', 9,2)->nullable();
             $table->timestamps();
         });

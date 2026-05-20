@@ -19,4 +19,9 @@ class Mala extends Model
     {
         return $this->belongsTo(Viagem::class);
     }
+
+    public function itens()
+    {
+        return $this->hasMany(ItemMala::class);
+    }
 }

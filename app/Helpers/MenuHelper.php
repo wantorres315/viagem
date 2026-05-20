@@ -20,9 +20,14 @@ class MenuHelper
                 'path' => '/minha-viagem',
             ],
              [
-                'icon' => 'calendar',
+                'icon' => 'pages',
                 'name' => 'Malas da Viagem',
                 'path' => '/malas',
+            ],
+             [
+                'icon' => 'user-profile',
+                'name' => 'Amigos / Parentes',
+                'path' => '/amigos',
             ],
         ];
     }

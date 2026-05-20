@@ -5,9 +5,9 @@
     <!-- Card Header -->
     <div class="px-6 py-5 flex justify-between items-center">
         <h3 class="text-base font-medium text-gray-800 dark:text-white/90">
-            Minhas Viagens
+            Minhas Malas
         </h3>
-        <a href="{{ route('minha-viagem.create') }}" class="bg-brand-500 hover:bg-brand-600 rounded-lg p-3 text-sm font-medium text-white transition-colors">Nova Viagem</a>
+        <a href="{{ route('mala.create') }}" class="bg-brand-500 hover:bg-brand-600 rounded-lg p-3 text-sm font-medium text-white transition-colors">Nova Mala</a>
     </div>
 
     <!-- Card Body -->
@@ -25,15 +25,15 @@
             <tbody>
                 @forelse($malas as $mala)
                     <tr>
-                        <td class="border px-4 py-2">{{ $viagem->nome }}</td>
-                        <td class="border px-4 py-2">{{ \Carbon\Carbon::parse($viagem->data_ida)->format('d/m/Y') }}</td>
-                        <td class="border px-4 py-2">{{ \Carbon\Carbon::parse($viagem->data_volta)->format('d/m/Y') }}</td>
-                        <td class="border px-4 py-2">{{ $viagem->pessoas->count() }}</td>
+                        <td class="border px-4 py-2">{{ $mala->descricao }}</td>
+                        <td class="border px-4 py-2">{{ $mala->viagem->nome }}</td>
+                        <td class="border px-4 py-2">{{ $mala->itens->count() }}</td>
+                        <td class="border px-4 py-2">{{ $mala->peso }}</td>
                         <td class="border px-4 py-2">
-                            <a href="{{ route('minha-viagem.edit', $viagem->id) }}" class="btn btn-sm btn-warning" title="Editar">
+                            <a href="{{ route('mala.edit', $mala->id) }}" class="btn btn-sm btn-warning" title="Editar">
                                 <i class="bi bi-pencil"></i>
                             </a>
-                            <form action="{{ route('minha-viagem.destroy', $viagem->id) }}" method="POST" class="inline-block" onsubmit="return confirm('Tem certeza que deseja deletar esta viagem?');">
+                            <form action="{{ route('mala.destroy', $mala->id) }}" method="POST" class="inline-block" onsubmit="return confirm('Tem certeza que deseja deletar esta viagem?');">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-sm btn-danger" title="Deletar">
@@ -44,7 +44,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="4" class="text-center py-4">Nenhuma viagem cadastrada.</td>
+                        <td colspan="4" class="text-center py-4">Nenhuma mala cadastrada.</td>
                     </tr>
                 @endforelse
             </tbody>

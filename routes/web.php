@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MinhaViagemController;
 use App\Http\Controllers\MalaController;
+use App\Http\Controllers\AmigoController;
 
 Route::get('/', function () {
     return view('auth.login');
@@ -33,7 +34,18 @@ Route::middleware('auth')->group(function () {
         Route::post('/', 'store')->name('mala.store');
         Route::get('/{malaId}/editar', 'edit')->name('mala.edit');
         Route::put('/{mala}', 'update')->name('mala.update');
+        Route::delete('/{mala}', 'destroy')->name('mala.destroy');  
     });
+
+    Route::prefix('amigos')->controller(\App\Http\Controllers\AmigoController::class)->group(function () {
+        Route::get('/', 'index')->name('amigo.index');
+        Route::get('/create', 'create')->name('amigo.create');
+        Route::post('/', 'store')->name('amigo.store');
+        Route::get('/{amigoId}/editar', 'edit')->name('amigo.edit');
+        Route::put('/{amigo}', 'update')->name('amigo.update');
+        Route::delete('/{amigo}', 'destroy')->name('amigo.destroy');
+    });
+    
     });
 
 require __DIR__.'/auth.php';
