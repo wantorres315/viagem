@@ -11,7 +11,7 @@
     @foreach($viagem->itinerarios as $itinerario)
         <div class="mb-2">
             <div style="background:#e3f2fd; color:#1565c0; padding:6px 12px; border-radius:6px; font-weight:bold; margin-bottom:4px;">
-                {{ $itinerario->data }}
+                {{ \Carbon\Carbon::parse($itinerario->data)->format('d/m/Y') }}
             </div>
             <ul class="ml-4 list-disc">
                 @foreach($itinerario->passeios as $passeio)
