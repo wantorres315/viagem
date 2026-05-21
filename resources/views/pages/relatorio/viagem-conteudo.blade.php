@@ -84,7 +84,7 @@
     <ul class="ml-4">
         @foreach($viagem->malas as $mala)
             <li class="font-semibold">{{ $mala->descricao }}
-                <ul class="ml-4 list-disc">
+                <ul class="ml-4 list-disc" style="border-bottom:1px solid #eee; padding-bottom:10px; margin-bottom:10px;">
                     @foreach($mala->itens as $item)
                         <li>{{ $item->nome }}</li>
                     @endforeach
