@@ -106,13 +106,23 @@
 
 </head>
   <script>
-
 if ('serviceWorker' in navigator) {
 
-    navigator.serviceWorker
-        .register('/serviceworker.js');
-}
+    window.addEventListener('load', async () => {
 
+        try {
+
+            const registration =
+                await navigator.serviceWorker.register('/serviceworker.js');
+
+            console.log('SW registrado', registration);
+
+        } catch (e) {
+
+            console.log('Erro SW', e);
+        }
+    });
+}
 </script>
 <body
     x-data="{ 'loaded': true}"
