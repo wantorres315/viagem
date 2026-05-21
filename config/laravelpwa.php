@@ -6,8 +6,6 @@ return [
         'name' => env('APP_NAME', 'Viagens'),
         'short_name' => 'Viagens',
         'start_url' => '/',
-        'id' => '/',
-        'scope' => '/',
         'description' => 'Aplicação de viagens',
         'lang' => 'pt-PT',
         'background_color' => '#f70ca1',
@@ -62,6 +60,9 @@ return [
             '2048x2732' => '/images/icons/splash-2048x2732.png',
         ],
         'shortcuts' => [],
-        'custom' => []
+        'custom' => [
+            'id' => '/',
+            'scope' => '/',
+        ]
     ]
 ];
