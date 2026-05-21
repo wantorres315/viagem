@@ -49,4 +49,9 @@ class Viagem extends Model
     {
         return $this->hasMany(Amigo::class);
     }
+
+    public function checklist()
+    {
+        return $this->hasMany(ChecklistViagem::class);
+    }
 }

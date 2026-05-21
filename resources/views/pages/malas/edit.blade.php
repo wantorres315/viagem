@@ -62,7 +62,93 @@
                         <i class="bi bi-plus"></i> Adicionar Item
                     </button>
                 </div>
+                {{-- PRESENTES CADASTRADOS NESTA MALA --}}
+@if($mala->presentes && $mala->presentes->count())
 
+    <div class="mt-8">
+
+        <div class="flex items-center mb-4">
+
+            <i class="bi bi-gift text-pink-500 mr-2"></i>
+
+            <span class="text-base font-semibold text-gray-700">
+                Presentes nesta Mala
+            </span>
+
+        </div>
+
+        <div class="rounded-xl border border-gray-200 overflow-hidden">
+
+            <table class="w-full text-sm">
+
+                <thead class="bg-gray-100">
+
+                    <tr>
+
+                        <th class="text-left px-4 py-3 font-semibold text-gray-700">
+                            Pessoa
+                        </th>
+
+                        <th class="text-left px-4 py-3 font-semibold text-gray-700">
+                            Presentes
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    @foreach(
+                        $mala->presentes->groupBy('amigo.nome')
+                        as $nomeAmigo => $presentes
+                    )
+
+                        <tr class="border-t">
+
+                            {{-- PESSOA --}}
+                            <td class="px-4 py-3 font-medium text-gray-800 align-top whitespace-nowrap">
+                                {{ $nomeAmigo }}
+                            </td>
+
+                            {{-- PRESENTES --}}
+                            <td class="px-4 py-3 text-gray-700">
+
+                                <div class="flex flex-wrap gap-2">
+
+                                    @foreach($presentes as $presente)
+
+                                        <span class="
+                                            px-2 py-1 rounded-lg text-xs font-medium
+                                            {{ $presente->entregue
+                                                ? 'bg-green-100 text-green-700'
+                                                : 'bg-yellow-100 text-yellow-700'
+                                            }}
+                                        ">
+
+                                            {{ $presente->presente }}
+
+                                        </span>
+
+                                    @endforeach
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                    @endforeach
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+@endif
                 <button type="submit" class="bg-brand-500 hover:bg-brand-600 rounded-lg p-3 text-sm font-medium text-white transition-colors">Salvar Mala</button>
             </form>
             @push('scripts')

@@ -46,8 +46,17 @@ class RelatorioViagemController extends Controller
         $viagem = Viagem::with([
             'itinerarios.passeios'
         ])->findOrFail($request->viagem_id);
-        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pages.relatorio.viagem-itinerario', compact('viagem'));
-        return $pdf->download('itinerario-viagem-'.$viagem->id.'.pdf');
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView(
+            'pages.relatorio.viagem-itinerario',
+            compact('viagem')
+        )->setOptions([
+            'isRemoteEnabled' => true,
+        ]);
+
+        return $pdf->download(
+            'itinerario-viagem-'.$viagem->id.'.pdf'
+        );
     }
 
     public function presentesPorEvento(Request $request)

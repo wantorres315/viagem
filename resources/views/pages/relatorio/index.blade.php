@@ -18,7 +18,7 @@
                 <a href="{{ route('relatorio.viagem.pdf', ['viagem_id' => $viagemSelecionada->id]) }}" target="_blank" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">Imprimir em PDF</a>
                 <a href="{{ route('relatorio.viagem.itinerario.pdf', ['viagem_id' => $viagemSelecionada->id]) }}" target="_blank" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">Imprimir só Itinerário</a>
             </div>
-            @include('pages.relatorio.viagem-conteudo', ['viagem' => $viagemSelecionada])
+            @include('pages.relatorio.viagem-conteudotela', ['viagem' => $viagemSelecionada])
         </div>
     @endif
 </div>
