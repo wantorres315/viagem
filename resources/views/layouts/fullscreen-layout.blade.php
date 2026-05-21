@@ -136,15 +136,14 @@
         })();
     </script>
 </head>
-<script>
+  <script>
+
 if ('serviceWorker' in navigator) {
 
-    window.addEventListener('load', () => {
-
-        navigator.serviceWorker.register('/sw.js');
-
-    });
+    navigator.serviceWorker
+        .register('/serviceworker.js');
 }
+
 </script>
 <body
     x-data="{ loaded: true }"
@@ -179,72 +178,7 @@ if ('serviceWorker' in navigator) {
     {{-- CONTEÚDO --}}
     @yield('content')
 
-    {{-- SCRIPT PWA --}}
-    <script>
 
-        let deferredPrompt = null;
-
-        const installButton =
-            document.getElementById('installApp');
-
-
-        // Android / Windows
-        window.addEventListener(
-            'beforeinstallprompt',
-            (e) => {
-
-                console.log('PWA instalável');
-
-                e.preventDefault();
-
-                deferredPrompt = e;
-            }
-        );
-
-
-        // Clique botão
-        installButton.addEventListener(
-            'click',
-            async () => {
-
-                // Android / Windows
-                if (deferredPrompt) {
-
-                    deferredPrompt.prompt();
-
-                    const { outcome } =
-                        await deferredPrompt.userChoice;
-
-                    console.log('Resultado:', outcome);
-
-                    return;
-                }
-
-                // iPhone
-                const isIos =
-                    /iphone|ipad|ipod/i.test(
-                        window.navigator.userAgent
-                    );
-
-                if (isIos) {
-
-                    alert(
-                        'Para instalar no iPhone:\n\n' +
-                        '1. Toque em Compartilhar\n' +
-                        '2. "Adicionar à Tela Principal"'
-                    );
-
-                    return;
-                }
-
-                // fallback
-                alert(
-                    'Instalação não disponível neste navegador.'
-                );
-            }
-        );
-
-    </script>
 
 </body>
 
