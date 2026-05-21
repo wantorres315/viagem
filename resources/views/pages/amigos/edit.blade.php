@@ -1,137 +1,149 @@
 @extends('layouts.app')
 
 @section('content')
-    <x-common.page-breadcrumb pageTitle="Editar Amigo" />
 
-    <div class="mt-8">
+<x-common.page-breadcrumb pageTitle="Editar Amigo" />
 
-        <div class="rounded-2xl border border-gray-200 bg-white p-6 w-full">
+<div class="mt-8">
 
-            @if(session('success'))
-                <div class="alert alert-success">
-                    {{ session('success') }}
+    <div class="rounded-2xl border border-gray-200 bg-white p-4 sm:p-6 w-full">
+
+        {{-- ALERTA --}}
+        @if(session('success'))
+
+            <div class="alert alert-success mb-4">
+                {{ session('success') }}
+            </div>
+
+        @endif
+
+        <form method="POST" action="{{ route('amigo.update', $amigo->id) }}">
+
+            @csrf
+            @method('PUT')
+
+            {{-- NOME --}}
+            <x-form.form-elements.input
+                label="Nome do Amigo"
+                name="nome"
+                :value="$amigo->nome"
+                required
+            />
+
+            {{-- CIDADE --}}
+            <x-form.form-elements.input
+                label="Cidade"
+                name="cidade"
+                :value="$amigo->cidade"
+            />
+
+            {{-- PRESENTES --}}
+            <div class="mb-6">
+
+                <div class="flex items-center mb-2">
+
+                    <i class="bi bi-gift text-brand-500 mr-2"></i>
+
+                    <span class="text-base font-semibold text-gray-700">
+                        Presentes
+                    </span>
+
                 </div>
-            @endif
 
-            <form method="POST" action="{{ route('amigo.update', $amigo->id) }}">
+                <div id="presentes-list" class="space-y-3">
 
-                @csrf
-                @method('PUT')
+                    @foreach($amigo->presentes as $i => $presente)
 
-                {{-- NOME --}}
-                <x-form.form-elements.input
-                    label="Nome do Amigo"
-                    name="nome"
-                    :value="$amigo->nome"
-                    required
-                />
+                        <div class="
+                            rounded-xl border border-gray-200 bg-gray-50
+                            p-4 flex flex-col lg:flex-row lg:items-end
+                            gap-4 presente-item relative shadow-sm
+                        ">
 
-                {{-- CIDADE --}}
-                <x-form.form-elements.input
-                    label="Cidade"
-                    name="cidade"
-                    :value="$amigo->cidade"
-                />
+                            {{-- ID --}}
+                            <input
+                                type="hidden"
+                                name="presentes[{{ $i }}][id]"
+                                value="{{ $presente->id }}"
+                            >
 
-                {{-- PRESENTES --}}
-                <div class="mb-6">
+                            {{-- DESCRIÇÃO --}}
+                            <div class="flex-1 w-full">
 
-                    <div class="flex items-center mb-2">
-                        <i class="bi bi-gift text-brand-500 mr-2"></i>
+                                <label class="block text-xs font-medium text-gray-600 mb-1">
+                                    Descrição
+                                </label>
 
-                        <span class="text-base font-semibold text-gray-700">
-                            Presentes
-                        </span>
-                    </div>
-
-                    <div id="presentes-list" class="space-y-3">
-
-                        @foreach($amigo->presentes as $i => $presente)
-
-                            <div class="rounded-xl border border-gray-200 bg-gray-50 p-4 flex flex-row items-end gap-4 presente-item relative shadow-sm">
-
-                                {{-- ID DO PRESENTE --}}
                                 <input
-                                    type="hidden"
-                                    name="presentes[{{ $i }}][id]"
-                                    value="{{ $presente->id }}"
+                                    type="text"
+                                    name="presentes[{{ $i }}][descricao]"
+                                    class="form-control w-full"
+                                    placeholder="Descrição do presente"
+                                    value="{{ $presente->presente }}"
+                                    required
+                                />
+
+                            </div>
+
+                            {{-- MALA --}}
+                            <div class="w-full lg:w-56">
+
+                                <label class="block text-xs font-medium text-gray-600 mb-1">
+                                    Mala
+                                </label>
+
+                                <select
+                                    name="presentes[{{ $i }}][mala_id]"
+                                    class="form-control w-full"
+                                    required
                                 >
 
-                                {{-- DESCRIÇÃO --}}
-                                <div class="flex-1">
+                                    <option value="">
+                                        Selecione a mala
+                                    </option>
 
-                                    <label class="block text-xs font-medium text-gray-600 mb-1">
-                                        Descrição
-                                    </label>
+                                    @foreach($malas as $mala)
 
-                                    <input
-                                        type="text"
-                                        name="presentes[{{ $i }}][descricao]"
-                                        class="form-control w-full"
-                                        placeholder="Descrição do presente"
-                                        value="{{ $presente->presente }}"
-                                        required
-                                    />
-
-                                </div>
-
-                                {{-- MALA --}}
-                                <div class="w-48">
-
-                                    <label class="block text-xs font-medium text-gray-600 mb-1">
-                                        Mala
-                                    </label>
-
-                                    <select
-                                        name="presentes[{{ $i }}][mala_id]"
-                                        class="form-control w-full"
-                                        required
-                                    >
-
-                                        <option value="">
-                                            Selecione a mala
+                                        <option
+                                            value="{{ $mala->id }}"
+                                            {{ $presente->mala_id == $mala->id ? 'selected' : '' }}
+                                        >
+                                            {{ $mala->descricao }}
                                         </option>
 
-                                        @foreach($malas as $mala)
+                                    @endforeach
 
-                                            <option
-                                                value="{{ $mala->id }}"
-                                                {{ $presente->mala_id == $mala->id ? 'selected' : '' }}
-                                            >
-                                                {{ $mala->descricao }}
-                                            </option>
+                                </select>
 
-                                        @endforeach
+                            </div>
 
-                                    </select>
+                            {{-- ENTREGUE --}}
+                            <div class="w-full lg:w-auto">
 
-                                </div>
+                                <label class="inline-flex items-center space-x-2">
 
-                                {{-- ENTREGUE --}}
-                                <div class="flex flex-col justify-end">
+                                    <input
+                                        type="checkbox"
+                                        name="presentes[{{ $i }}][entregue]"
+                                        value="1"
+                                        class="form-checkbox rounded text-green-600"
+                                        {{ $presente->entregue ? 'checked' : '' }}
+                                    />
 
-                                    <label class="inline-flex items-center space-x-2">
+                                    <span class="text-sm text-gray-700">
+                                        Entregue
+                                    </span>
 
-                                        <input
-                                            type="checkbox"
-                                            name="presentes[{{ $i }}][entregue]"
-                                            value="1"
-                                            class="form-checkbox rounded text-green-600"
-                                            {{ $presente->entregue ? 'checked' : '' }}
-                                        />
+                                </label>
 
-                                        <span class="text-sm text-gray-700">
-                                            Entregue
-                                        </span>
+                            </div>
 
-                                    </label>
+                            {{-- REMOVER --}}
+                            <div class="w-full lg:w-auto">
 
-                                </div>
-
-                                {{-- REMOVER --}}
                                 <button
                                     type="button"
-                                    class="btn btn-danger btn-sm remove-presente ml-2"
+                                    class="btn btn-danger btn-sm remove-presente w-full lg:w-auto"
                                     title="Remover presente"
                                 >
                                     <i class="bi bi-x-lg"></i>
@@ -139,78 +151,89 @@
 
                             </div>
 
-                        @endforeach
+                        </div>
 
-                    </div>
-
-                    {{-- BOTÃO ADD --}}
-                    <button
-                        type="button"
-                        class="btn btn-primary btn-sm mt-3"
-                        id="add-presente"
-                    >
-                        <i class="bi bi-plus"></i>
-                        Adicionar Presente
-                    </button>
+                    @endforeach
 
                 </div>
 
-                {{-- PASSEIOS --}}
-                <div class="mb-6">
-
-                    <div class="flex items-center mb-2">
-
-                        <i class="bi bi-people text-brand-500 mr-2"></i>
-
-                        <span class="text-base font-semibold text-gray-700">
-                            Passeios com este amigo
-                        </span>
-
-                    </div>
-
-                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
-
-                        @foreach($passeios as $passeio)
-
-                            <label class="inline-flex items-center space-x-2">
-
-                                <input
-                                    type="checkbox"
-                                    name="passeios[]"
-                                    value="{{ $passeio->id }}"
-                                    {{ $amigo->passeios->contains($passeio->id) ? 'checked' : '' }}
-                                    class="form-checkbox rounded text-brand-500 focus:ring-brand-500"
-                                />
-
-                                <span>
-                                    {{ $passeio->nome }}
-                                </span>
-
-                            </label>
-
-                        @endforeach
-
-                    </div>
-
-                    <small class="text-xs text-gray-500">
-                        Marque os passeios deste amigo.
-                    </small>
-
-                </div>
-
-                {{-- BOTÃO --}}
+                {{-- ADD --}}
                 <button
-                    type="submit"
-                    class="bg-brand-500 hover:bg-brand-600 rounded-lg p-3 text-sm font-medium text-white transition-colors"
+                    type="button"
+                    class="btn btn-primary btn-sm mt-3 w-full sm:w-auto"
+                    id="add-presente"
                 >
-                    Salvar Amigo
+                    <i class="bi bi-plus"></i>
+                    Adicionar Presente
                 </button>
 
-            </form>
+            </div>
 
-        </div>
+            {{-- PASSEIOS --}}
+            <div class="mb-6">
+
+                <div class="flex items-center mb-2">
+
+                    <i class="bi bi-people text-brand-500 mr-2"></i>
+
+                    <span class="text-base font-semibold text-gray-700">
+                        Passeios com este amigo
+                    </span>
+
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+
+                    @foreach($passeios as $passeio)
+
+                        <label class="
+                            inline-flex items-start gap-2
+                            border rounded-lg p-3 bg-gray-50
+                        ">
+
+                            <input
+                                type="checkbox"
+                                name="passeios[]"
+                                value="{{ $passeio->id }}"
+                                {{ $amigo->passeios->contains($passeio->id) ? 'checked' : '' }}
+                                class="form-checkbox rounded text-brand-500 focus:ring-brand-500 mt-1"
+                            />
+
+                            <span class="text-sm">
+                                {{ $passeio->nome }}
+                            </span>
+
+                        </label>
+
+                    @endforeach
+
+                </div>
+
+                <small class="text-xs text-gray-500 block mt-2">
+                    Marque os passeios deste amigo.
+                </small>
+
+            </div>
+
+            {{-- SALVAR --}}
+            <button
+                type="submit"
+                class="
+                    bg-brand-500 hover:bg-brand-600
+                    rounded-lg px-5 py-3 text-sm font-medium
+                    text-white transition-colors
+                    w-full sm:w-auto
+                "
+            >
+                Salvar Amigo
+            </button>
+
+        </form>
 
     </div>
+
+</div>
+
 @endsection
 
 @push('scripts')
@@ -218,12 +241,6 @@
 <script>
 
 document.addEventListener('DOMContentLoaded', function() {
-
-    /*
-    |--------------------------------------------------------------------------
-    | ELEMENTOS
-    |--------------------------------------------------------------------------
-    */
 
     let presentesList = document.getElementById('presentes-list');
 
@@ -241,11 +258,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const div = document.createElement('div');
 
-        div.className = 'rounded-xl border border-gray-200 bg-gray-50 p-4 flex flex-row items-end gap-4 presente-item relative shadow-sm';
+        div.className = `
+            rounded-xl border border-gray-200 bg-gray-50
+            p-4 flex flex-col lg:flex-row lg:items-end
+            gap-4 presente-item relative shadow-sm
+        `;
 
         div.innerHTML = `
 
-            <div class="flex-1">
+            <div class="flex-1 w-full">
 
                 <label class="block text-xs font-medium text-gray-600 mb-1">
                     Descrição
@@ -261,7 +282,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             </div>
 
-            <div class="w-48">
+            <div class="w-full lg:w-56">
 
                 <label class="block text-xs font-medium text-gray-600 mb-1">
                     Mala
@@ -289,7 +310,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             </div>
 
-            <div class="flex flex-col justify-end">
+            <div class="w-full lg:w-auto">
 
                 <label class="inline-flex items-center space-x-2">
 
@@ -308,13 +329,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
             </div>
 
-            <button
-                type="button"
-                class="btn btn-danger btn-sm remove-presente ml-2"
-                title="Remover presente"
-            >
-                <i class="bi bi-x-lg"></i>
-            </button>
+            <div class="w-full lg:w-auto">
+
+                <button
+                    type="button"
+                    class="btn btn-danger btn-sm remove-presente w-full lg:w-auto"
+                    title="Remover presente"
+                >
+                    <i class="bi bi-x-lg"></i>
+                </button>
+
+            </div>
 
         `;
 
