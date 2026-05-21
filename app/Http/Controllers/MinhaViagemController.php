@@ -19,7 +19,11 @@ class MinhaViagemController extends Controller
 
     public function edit($viagemId)
     {
-        $viagem = auth()->user()->viagens()->with(['itinerarios.passeios', 'destinos.voo'])->findOrFail($viagemId);
+        $viagem = auth()->user()->viagens()->with([
+            'itinerarios.passeios',
+            'destinos.voo',
+            'pessoas.documentos',
+        ])->findOrFail($viagemId);
         return view('pages.minha-viagem.edit', compact('viagem'));
     }
 
@@ -37,12 +41,31 @@ class MinhaViagemController extends Controller
         $viagem = $request->user()->viagens()->create($data);
         // Salvar pessoas
         if ($request->has('pessoas')) {
-            foreach ($request->input('pessoas') as $pessoaData) {
+            foreach ($request->input('pessoas') as $idx => $pessoaData) {
                 if (!empty($pessoaData['nome']) && !empty($pessoaData['idade'])) {
-                    $viagem->pessoas()->create([
+                    $pessoa = $viagem->pessoas()->create([
                         'nome' => $pessoaData['nome'],
                         'idade' => $pessoaData['idade'],
                     ]);
+                    // Salvar documentos se enviados
+                    if (isset($pessoaData['documentos']) && is_array($pessoaData['documentos'])) {
+                    foreach ($pessoaData['documentos'] as $docIdx => $doc) {
+                        
+                            $foto = null;
+                            // Trata upload da foto
+                            if ($request->hasFile("pessoas.$idx.documentos.$docIdx.foto")) {
+                                $fotoFile = $request->file("pessoas.$idx.documentos.$docIdx.foto");
+                                $foto = $fotoFile->store('documentos', 'public');
+                            }
+                            Documento::create([
+                                'tipo' => $doc['tipo'],
+                                'foto' => $foto,
+                                'viagem_id' => $viagem->id,
+                                    'pessoa_id' => $pessoa->id,
+                                ]);
+                           
+                        }
+                    }
                 }
             }
         }
@@ -130,12 +153,30 @@ class MinhaViagemController extends Controller
 
         // Pessoas (depois dos destinos para manter ordem)
         if ($request->has('pessoas')) {
-            foreach ($request->input('pessoas') as $pessoaData) {
+            foreach ($request->input('pessoas') as $idx => $pessoaData) {
                 if (!empty($pessoaData['nome']) && !empty($pessoaData['idade'])) {
-                    $viagem->pessoas()->create([
+                    $pessoa = $viagem->pessoas()->create([
                         'nome' => $pessoaData['nome'],
                         'idade' => $pessoaData['idade'],
                     ]);
+                    // Salvar documentos se enviados
+                    if (isset($pessoaData['documentos']) && is_array($pessoaData['documentos'])) {
+                        foreach ($pessoaData['documentos'] as $docIdx => $doc) {
+                            if (!empty($doc['tipo'])) {
+                                $foto = null;
+                                // Trata upload da foto
+                                if ($request->hasFile("pessoas.$idx.documentos.$docIdx.foto")) {
+                                    $fotoFile = $request->file("pessoas.$idx.documentos.$docIdx.foto");
+                                    $foto = $fotoFile->store('documentos', 'public');
+                                }
+                                $pessoa->documentos()->create([
+                                    'tipo' => $doc['tipo'],
+                                    'foto' => $foto,
+                                    'viagem_id' => $viagem->id,
+                                ]);
+                            }
+                        }
+                    }
                 }
             }
         }

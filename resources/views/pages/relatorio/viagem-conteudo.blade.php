@@ -45,7 +45,23 @@
     <h3 class="font-semibold text-lg mb-2">Pessoas da Viagem</h3>
     <ul class="ml-4 list-disc">
         @foreach($viagem->pessoas as $pessoa)
-            <li>{{ $pessoa->nome }} ({{ $pessoa->idade }} anos)</li>
+            <li style="margin-bottom: 10px;">
+                <div><strong>{{ $pessoa->nome }}</strong> ({{ $pessoa->idade }} anos)</div>
+                @if($pessoa->documentos && count($pessoa->documentos))
+                    <div style="margin-left: 10px; margin-top: 2px;">
+                        <span style="font-size: 0.95em; color: #444;">Documentos:</span>
+                        @foreach($pessoa->documentos as $doc)
+                            <div style="display: inline-block; margin-right: 12px; margin-bottom: 4px;">
+                                <span style="font-size:0.9em;">{{ $doc->tipo }}</span>
+                                @if($doc->foto)
+                                    <br>
+                                    <img src="{{ asset('storage/' . $doc->foto) }}" alt="Foto documento" style="max-width:200px; max-height:200px; border:2px solid #666; border-radius:10px; margin-top:6px;">
+                                @endif
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
+            </li>
         @endforeach
     </ul>
     <hr class="my-4">

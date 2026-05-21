@@ -7,7 +7,7 @@
             @if(session('success'))
                 <div class="alert alert-success">{{ session('success') }}</div>
             @endif
-            <form method="POST" action="{{ isset($viagem) ? route('minha-viagem.update', $viagem->id) : route('minha-viagem.store') }}">
+            <form method="POST" enctype="multipart/form-data" action="{{ isset($viagem) ? route('minha-viagem.update', $viagem->id) : route('minha-viagem.store') }}">
                 @csrf
                 @if(isset($viagem))
                     @method('PUT')
@@ -106,6 +106,31 @@
                                 <div class="flex-1">
                                     <label class="block text-xs font-medium text-gray-600 mb-1">Idade</label>
                                     <input type="number" name="pessoas[{{ $i }}][idade]" class="form-control w-full" placeholder="Idade" value="{{ $pessoa['idade'] ?? '' }}" min="0" required />
+                                </div>
+                                <div class="flex-1">
+                                    <label class="block text-xs font-medium text-gray-600 mb-1">Documentos</label>
+                                    <div class="documentos-list space-y-2">
+                                        @php
+                                            $documentos = $pessoa['documentos'] ?? ($pessoa['id'] ?? false ? (isset($pessoa['documentos']) ? $pessoa['documentos'] : (isset($pessoa['id']) && isset($viagem) ? ($viagem->pessoas->where('id', $pessoa['id'])->first()->documentos->toArray() ?? []) : [])) : []);
+                                        @endphp
+                                        @foreach($documentos as $d => $doc)
+                                            <div class="flex gap-2 mb-1 items-center">
+                                                <input type="text" name="pessoas[{{ $i }}][documentos][{{ $d }}][tipo]" class="form-control w-1/3" placeholder="Tipo (ex: RG)" value="{{ $doc['tipo'] ?? '' }}" />
+                                                <input type="file" name="pessoas[{{ $i }}][documentos][{{ $d }}][foto]" class="form-control w-2/3" accept="image/*" />
+                                                @if(!empty($doc['foto']))
+                                                    <a href="{{ asset('storage/' . $doc['foto']) }}" target="_blank" title="Ver foto">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="inline h-6 w-6 text-blue-600 hover:text-blue-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5z" />
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 15l-5-5a2 2 0 00-2.828 0l-5 5" />
+                                                            <circle cx="8.5" cy="8.5" r="1.5" />
+                                                        </svg>
+                                                    </a>
+                                                @endif
+                                                <button type="button" class="btn btn-danger btn-xs remove-documento">&times;</button>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                    <button type="button" class="btn btn-outline-primary btn-xs add-documento mt-1">Adicionar Documento</button>
                                 </div>
                                 <button type="button" class="btn btn-danger btn-sm remove-pessoa md:mb-0 md:ml-2 mt-2 md:mt-0 self-end md:self-auto" title="Remover pessoa">
                                     <i class="bi bi-x-lg"></i>
@@ -279,6 +304,11 @@
                                 <label class=\"block text-xs font-medium text-gray-600 mb-1\">Idade</label>
                                 <input type=\"number\" name=\"pessoas[${pessoaIndex}][idade]\" class=\"form-control w-full\" placeholder=\"Idade\" min=\"0\" required />
                             </div>
+                            <div class=\"flex-1\">
+                                <label class=\"block text-xs font-medium text-gray-600 mb-1\">Documentos</label>
+                                <div class=\"documentos-list space-y-2\"></div>
+                                <button type=\"button\" class=\"btn btn-outline-primary btn-xs add-documento mt-1\">Adicionar Documento</button>
+                            </div>
                             <button type=\"button\" class=\"btn btn-danger btn-sm remove-pessoa md:mb-0 md:ml-2 mt-2 md:mt-0 self-end md:self-auto\" title=\"Remover pessoa\"><i class=\"bi bi-x-lg\"></i></button>
                         `;
                         pessoasList.appendChild(div);
@@ -287,6 +317,22 @@
                     pessoasList.addEventListener('click', function(e) {
                         if (e.target.classList.contains('remove-pessoa') || e.target.closest('.remove-pessoa')) {
                             e.target.closest('.pessoa-item').remove();
+                        }
+                        if (e.target.classList.contains('add-documento')) {
+                            const pessoaDiv = e.target.closest('.pessoa-item');
+                            const documentosList = pessoaDiv.querySelector('.documentos-list');
+                            let docIndex = documentosList.querySelectorAll('input[name*="[tipo]"]').length;
+                            const docDiv = document.createElement('div');
+                            docDiv.className = 'flex gap-2 mb-1 items-center';
+                            docDiv.innerHTML = `
+                                <input type=\"text\" name=\"pessoas[${Array.from(pessoasList.children).indexOf(pessoaDiv)}][documentos][${docIndex}][tipo]\" class=\"form-control w-1/3\" placeholder=\"Tipo (ex: RG)\" />
+                                <input type=\"file\" name=\"pessoas[${Array.from(pessoasList.children).indexOf(pessoaDiv)}][documentos][${docIndex}][foto]\" class=\"form-control w-2/3\" accept=\"image/*\" />
+                                <button type=\"button\" class=\"btn btn-danger btn-xs remove-documento\">&times;</button>
+                            `;
+                            documentosList.appendChild(docDiv);
+                        }
+                        if (e.target.classList.contains('remove-documento')) {
+                            e.target.closest('div.flex').remove();
                         }
                     });
 
