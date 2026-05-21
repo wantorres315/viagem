@@ -6,6 +6,7 @@ use App\Models\Viagem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\View;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Models\Passeio;
 
 class RelatorioViagemController extends Controller
 {
@@ -49,15 +50,80 @@ class RelatorioViagemController extends Controller
         return $pdf->download('itinerario-viagem-'.$viagem->id.'.pdf');
     }
 
-        public function presentesPorEvento(Request $request)
-    {
-        $viagens = Viagem::where('user_id', auth()->id())->orderBy('data_ida', 'desc')->get();
-        $viagem = null;
-        if ($request->viagem_id) {
-            $viagem = Viagem::with([
-                'itinerarios.passeios.amigos.presentes',
-            ])->find($request->viagem_id);
-        }
-        return view('pages.relatorio.presentes-por-evento', compact('viagens', 'viagem'));
+    public function presentesPorEvento(Request $request)
+{
+    /*
+    |--------------------------------------------------------------------------
+    | LISTA DE VIAGENS
+    |--------------------------------------------------------------------------
+    */
+
+    $viagens = Viagem::where('user_id', auth()->id())
+        ->orderBy('data_ida', 'desc')
+        ->get();
+
+    /*
+    |--------------------------------------------------------------------------
+    | VARIÁVEIS
+    |--------------------------------------------------------------------------
+    */
+
+    $viagem = null;
+
+    $passeioSelecionado = null;
+
+    /*
+    |--------------------------------------------------------------------------
+    | CARREGA VIAGEM
+    |--------------------------------------------------------------------------
+    */
+
+    if ($request->filled('viagem_id')) {
+
+        $viagem = Viagem::with([
+            'itinerarios.passeios'
+        ])
+        ->where('user_id', auth()->id())
+        ->find($request->viagem_id);
     }
+
+    /*
+    |--------------------------------------------------------------------------
+    | CARREGA PASSEIO
+    |--------------------------------------------------------------------------
+    |
+    | Apenas presentes NÃO entregues
+    |
+    */
+
+    if ($request->filled('passeio_id')) {
+
+        $passeioSelecionado = Passeio::with([
+
+            'amigos.presentes' => function ($query) {
+
+                $query->where('entregue', false);
+
+            },
+
+            'amigos.presentes.mala'
+
+        ])->find($request->passeio_id);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | VIEW
+    |--------------------------------------------------------------------------
+    */
+
+    return view(
+        'pages.relatorio.presentes-por-evento',
+        compact(
+            'viagens',
+            'viagem',
+            'passeioSelecionado'
+        )
+    );
+}
 }

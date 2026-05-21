@@ -53,47 +53,134 @@ class AmigoController extends Controller
         return view('pages.amigos.edit', compact('amigo', 'passeios', 'malas'));
     }
 
-    public function update(Request $request, $amigoId)
-    {
-        $amigo = Amigo::findOrFail($amigoId);
-        $data = $request->validate([
-            'nome' => 'required|string|max:255',
-            'cidade' => 'nullable|string|max:255',
-        ]);
-        $amigo->update($data);
+   public function update(Request $request, $amigoId)
+{
+    $amigo = Amigo::findOrFail($amigoId);
 
-        // Sincronizar passeios
-        $passeiosSelecionados = $request->input('passeios', []);
-        $amigo->passeios()->sync($passeiosSelecionados);
+    /*
+    |--------------------------------------------------------------------------
+    | VALIDAR
+    |--------------------------------------------------------------------------
+    */
 
-        // Sincronizar presentes
-        $presentesInput = $request->input('presentes', []);
-        $idsMantidos = [];
-        foreach ($presentesInput as $i => $presenteData) {
-            if (isset($presenteData['id'])) {
-                // Atualizar existente
-                $presente = $amigo->presentes()->find($presenteData['id']);
-                if ($presente) {
-                    $presente->update([
-                        'presente' => $presenteData['descricao'],
-                        'mala_id' => $presenteData['mala_id'],
-                    ]);
-                    $idsMantidos[] = $presente->id;
-                }
-            } else {
-                // Criar novo
-                $novo = $amigo->presentes()->create([
+    $data = $request->validate([
+        'nome' => 'required|string|max:255',
+        'cidade' => 'nullable|string|max:255',
+    ]);
+
+    /*
+    |--------------------------------------------------------------------------
+    | ATUALIZAR AMIGO
+    |--------------------------------------------------------------------------
+    */
+
+    $amigo->update($data);
+
+    /*
+    |--------------------------------------------------------------------------
+    | SINCRONIZAR PASSEIOS
+    |--------------------------------------------------------------------------
+    */
+
+    $passeiosSelecionados = $request->input('passeios', []);
+
+    $amigo->passeios()->sync($passeiosSelecionados);
+
+    /*
+    |--------------------------------------------------------------------------
+    | SINCRONIZAR PRESENTES
+    |--------------------------------------------------------------------------
+    */
+
+    $presentesInput = $request->input('presentes', []);
+
+    $idsMantidos = [];
+
+    foreach ($presentesInput as $i => $presenteData) {
+
+        /*
+        |--------------------------------------------------------------------------
+        | CHECKBOX ENTREGUE
+        |--------------------------------------------------------------------------
+        |
+        | Se checkbox vier marcado:
+        | entregue = true
+        |
+        | Se checkbox NÃO vier:
+        | entregue = false
+        |
+        */
+
+        $entregue = isset($presenteData['entregue']);
+
+        /*
+        |--------------------------------------------------------------------------
+        | ATUALIZAR PRESENTE EXISTENTE
+        |--------------------------------------------------------------------------
+        */
+
+        if (isset($presenteData['id'])) {
+
+            $presente = $amigo->presentes()
+                ->find($presenteData['id']);
+
+            if ($presente) {
+
+                $presente->update([
+
                     'presente' => $presenteData['descricao'],
-                    'mala_id' => $presenteData['mala_id'],
-                ]);
-                $idsMantidos[] = $novo->id;
-            }
-        }
-        // Remover presentes que não estão mais
-        $amigo->presentes()->whereNotIn('id', $idsMantidos)->delete();
 
-        return redirect()->route('amigo.edit', $amigo->id)->with('success', 'Amigo atualizado!');
+                    'mala_id' => $presenteData['mala_id'],
+
+                    'entregue' => $entregue,
+
+                ]);
+
+                $idsMantidos[] = $presente->id;
+            }
+
+        } else {
+
+            /*
+            |--------------------------------------------------------------------------
+            | CRIAR NOVO PRESENTE
+            |--------------------------------------------------------------------------
+            */
+
+            $novo = $amigo->presentes()->create([
+
+                'presente' => $presenteData['descricao'],
+
+                'mala_id' => $presenteData['mala_id'],
+
+                'entregue' => $entregue,
+
+            ]);
+
+            $idsMantidos[] = $novo->id;
+        }
     }
+
+    /*
+    |--------------------------------------------------------------------------
+    | REMOVER PRESENTES EXCLUÍDOS
+    |--------------------------------------------------------------------------
+    */
+
+    $amigo->presentes()
+        ->whereNotIn('id', $idsMantidos)
+        ->delete();
+
+    /*
+    |--------------------------------------------------------------------------
+    | REDIRECT
+    |--------------------------------------------------------------------------
+    */
+
+    return redirect()
+        ->route('amigo.edit', $amigo->id)
+        ->with('success', 'Amigo atualizado!');
+}
 
     public function destroy($amigoId)
     {

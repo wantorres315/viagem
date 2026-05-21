@@ -13,11 +13,17 @@ class Presente extends Model
         'amigo_id',
         'presente',
         'mala_id',
+        'entregue',
     ];
 
     // Relacionamentos
     public function amigo()
     {
         return $this->belongsTo(Amigo::class);
+    }
+
+    public function mala()
+    {
+        return $this->belongsTo(Mala::class);
     }
 }
