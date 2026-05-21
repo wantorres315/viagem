@@ -172,14 +172,7 @@ if ('serviceWorker' in navigator) {
     "
 >
 
-    {{-- BOTÃO INSTALAR APP --}}
-    <button
-        id="installApp"
-        class="fixed bottom-5 right-5 bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-xl shadow-2xl z-50"
-    >
-        Instalar App
-    </button>
-
+    
     {{-- PRELOADER --}}
     <x-common.preloader />
 
