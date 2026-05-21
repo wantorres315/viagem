@@ -3,6 +3,7 @@
 
 <head>
     @laravelPWA
+
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -21,7 +22,7 @@
             Alpine.store('theme', {
                 init() {
                     const savedTheme = localStorage.getItem('theme');
-                    const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' :
+                    const systemTheme = window.matchMedia('(prefers-color-scheme: dark').matches ? 'dark' :
                         'light';
                     this.theme = savedTheme || systemTheme;
                     this.updateTheme();
@@ -46,20 +47,17 @@
             });
 
             Alpine.store('sidebar', {
-                // Initialize based on screen size
-                isExpanded: window.innerWidth >= 1280, // true for desktop, false for mobile
+                isExpanded: window.innerWidth >= 1280,
                 isMobileOpen: false,
                 isHovered: false,
 
                 toggleExpanded() {
                     this.isExpanded = !this.isExpanded;
-                    // When toggling desktop sidebar, ensure mobile menu is closed
                     this.isMobileOpen = false;
                 },
 
                 toggleMobileOpen() {
                     this.isMobileOpen = !this.isMobileOpen;
-                    // Don't modify isExpanded when toggling mobile menu
                 },
 
                 setMobileOpen(val) {
@@ -67,7 +65,6 @@
                 },
 
                 setHovered(val) {
-                    // Only allow hover effects on desktop when sidebar is collapsed
                     if (window.innerWidth >= 1280 && !this.isExpanded) {
                         this.isHovered = val;
                     }
@@ -82,6 +79,7 @@
             const savedTheme = localStorage.getItem('theme');
             const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
             const theme = savedTheme || systemTheme;
+
             if (theme === 'dark') {
                 document.documentElement.classList.add('dark');
                 document.body.classList.add('dark', 'bg-gray-900');
@@ -93,23 +91,89 @@
     </script>
 </head>
 
-<body x-data="{ 'loaded': true}" x-init="$store.sidebar.isExpanded = window.innerWidth >= 1280;
-const checkMobile = () => {
-    if (window.innerWidth < 1280) {
-        $store.sidebar.setMobileOpen(false);
-        $store.sidebar.isExpanded = false;
-    } else {
-        $store.sidebar.isMobileOpen = false;
-        $store.sidebar.isExpanded = true;
-    }
-};
-window.addEventListener('resize', checkMobile);">
+<body
+    x-data="{ 'loaded': true}"
+    x-init="$store.sidebar.isExpanded = window.innerWidth >= 1280;
+
+    const checkMobile = () => {
+        if (window.innerWidth < 1280) {
+            $store.sidebar.setMobileOpen(false);
+            $store.sidebar.isExpanded = false;
+        } else {
+            $store.sidebar.isMobileOpen = false;
+            $store.sidebar.isExpanded = true;
+        }
+    };
+
+    window.addEventListener('resize', checkMobile);"
+>
+
+    {{-- BOTÃO INSTALAR APP --}}
+    <button
+        id="installApp"
+        style="display:none;"
+        class="fixed bottom-4 right-4 bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-xl shadow-lg z-50"
+    >
+        Instalar App
+    </button>
 
     {{-- preloader --}}
-    <x-common.preloader/>
+    <x-common.preloader />
     {{-- preloader end --}}
 
     @yield('content')
+
+    <script>
+        let deferredPrompt;
+
+        const installButton = document.getElementById('installApp');
+
+        // Android / Windows
+        window.addEventListener('beforeinstallprompt', (e) => {
+
+            e.preventDefault();
+
+            deferredPrompt = e;
+
+            installButton.style.display = 'block';
+        });
+
+        installButton.addEventListener('click', async () => {
+
+            if (!deferredPrompt) {
+                alert('Instalação não disponível neste dispositivo.');
+                return;
+            }
+
+            deferredPrompt.prompt();
+
+            const { outcome } = await deferredPrompt.userChoice;
+
+            console.log('Resultado instalação:', outcome);
+
+            deferredPrompt = null;
+
+            installButton.style.display = 'none';
+        });
+
+        // iPhone
+        const isIos = /iphone|ipad|ipod/i.test(window.navigator.userAgent);
+
+        const isInStandaloneMode = ('standalone' in window.navigator) &&
+            (window.navigator.standalone);
+
+        if (isIos && !isInStandaloneMode) {
+
+            installButton.style.display = 'block';
+
+            installButton.addEventListener('click', () => {
+
+                alert(
+                    'No iPhone:\n\nToque no botão Compartilhar do Safari e depois em "Adicionar à Tela Principal".'
+                );
+            });
+        }
+    </script>
 
 </body>
 
