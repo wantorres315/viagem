@@ -29,7 +29,7 @@ class RelatorioViagemController extends Controller
     public function pdf(Request $request)
     {
         $viagem = Viagem::with([
-            'pessoas',
+            'pessoas.documentos',
             'itinerarios.passeios.amigos',
             'amigos.presentes',
             'amigos.passeios',
@@ -47,5 +47,17 @@ class RelatorioViagemController extends Controller
         ])->findOrFail($request->viagem_id);
         $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pages.relatorio.viagem-itinerario', compact('viagem'));
         return $pdf->download('itinerario-viagem-'.$viagem->id.'.pdf');
+    }
+
+        public function presentesPorEvento(Request $request)
+    {
+        $viagens = Viagem::where('user_id', auth()->id())->orderBy('data_ida', 'desc')->get();
+        $viagem = null;
+        if ($request->viagem_id) {
+            $viagem = Viagem::with([
+                'itinerarios.passeios.amigos.presentes',
+            ])->find($request->viagem_id);
+        }
+        return view('pages.relatorio.presentes-por-evento', compact('viagens', 'viagem'));
     }
 }

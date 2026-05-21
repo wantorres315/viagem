@@ -89,7 +89,7 @@
                         <li>{{ $item->nome }}</li>
                     @endforeach
                     @foreach($mala->presentes as $presente)
-                        <li>Presente: {{ $presente->presente }} -&gt; {{ $presente->amigo->nome ?? '-' }}</li>
+                        <li>{{ $presente->amigo->nome ?? '-' }} - {{ $presente->presente }}</li>
                     @endforeach
                 </ul>
             </li>

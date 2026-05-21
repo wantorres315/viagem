@@ -42,7 +42,12 @@ class MenuHelper
                 'icon' => 'forms',
                 'name' => 'Impressao da viagem',
                 'path' => '/impressao_viagem',
-            ]
+            ],
+            [
+                'icon' => 'gift',
+                'name' => 'Presentes por Evento',
+                'path' => '/relatorio/presentes-por-evento',
+            ],
         ];
     }
 

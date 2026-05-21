@@ -34,6 +34,7 @@ Route::middleware('auth')->group(function () {
         Route::delete('/{mala}', 'destroy')->name('mala.destroy');  
     });
 
+    Route::get('/relatorio/presentes-por-evento', [RelatorioViagemController::class, 'presentesPorEvento'])->name('relatorio.presentes-por-evento');
     Route::prefix('amigos')->controller(\App\Http\Controllers\AmigoController::class)->group(function () {
         Route::get('/', 'index')->name('amigo.index');
         Route::get('/create', 'create')->name('amigo.create');
