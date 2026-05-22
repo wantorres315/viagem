@@ -15,8 +15,9 @@ class ItemMala extends Model
         'mala_id',
         'pessoa_id',
         'item',
+        'na_mala',
     ];
-
+  
 
     public function pessoa()
     {

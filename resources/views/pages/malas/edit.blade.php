@@ -106,13 +106,46 @@
             {{-- ITENS --}}
             <div class="mb-6">
 
-                <div class="flex items-center mb-3">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-3">
 
-                    <i class="bi bi-list-task text-brand-500 mr-2"></i>
+                    <div class="flex items-center">
 
-                    <span class="text-base font-semibold text-gray-700">
-                        Itens da Mala
-                    </span>
+                        <i class="bi bi-list-task text-brand-500 mr-2"></i>
+
+                        <span class="text-base font-semibold text-gray-700">
+                            Itens da Mala
+                        </span>
+
+                    </div>
+
+                    @php
+                        $totalItens = $mala->itens->count();
+
+                        $itensNaMala = $mala->itens
+                            ->where('na_mala', true)
+                            ->count();
+
+                        $percentual = $totalItens > 0
+                            ? round(($itensNaMala / $totalItens) * 100)
+                            : 0;
+                    @endphp
+
+                    <div class="text-sm text-gray-600">
+
+                        {{ $itensNaMala }}/{{ $totalItens }}
+                        itens na mala
+
+                    </div>
+
+                </div>
+
+                {{-- BARRA --}}
+                <div class="w-full bg-gray-200 rounded-full h-3 mb-5 overflow-hidden">
+
+                    <div
+                        class="bg-green-500 h-3 rounded-full transition-all duration-300"
+                        style="width: {{ $percentual }}%"
+                    ></div>
 
                 </div>
 
@@ -127,11 +160,22 @@
                     @foreach($mala->itens as $i => $item)
 
                         <div class="
-                            rounded-xl border border-gray-200
-                            bg-gray-50 p-4
-                            flex flex-col lg:flex-row lg:items-end
+                            rounded-xl border
+                            {{ $item->na_mala
+                                ? 'border-green-200 bg-green-50'
+                                : 'border-gray-200 bg-gray-50'
+                            }}
+                            p-4
+                            flex flex-col xl:flex-row xl:items-end
                             gap-4 item-mala-item relative shadow-sm
                         ">
+
+                            {{-- ID --}}
+                            <input
+                                type="hidden"
+                                name="itens[{{ $i }}][id]"
+                                value="{{ $item->id }}"
+                            >
 
                             {{-- ITEM --}}
                             <div class="flex-1 w-full">
@@ -152,7 +196,7 @@
                             </div>
 
                             {{-- PESSOA --}}
-                            <div class="w-full lg:w-64">
+                            <div class="w-full xl:w-64">
 
                                 <label class="block text-xs font-medium text-gray-600 mb-1">
                                     Pessoa
@@ -183,12 +227,41 @@
 
                             </div>
 
+                            {{-- NA MALA --}}
+                            <div class="w-full xl:w-auto">
+
+                                <label class="inline-flex items-center space-x-2">
+
+                                    {{-- HIDDEN --}}
+                                    <input
+                                        type="hidden"
+                                        name="itens[{{ $i }}][na_mala]"
+                                        value="0"
+                                    >
+
+                                    {{-- CHECKBOX --}}
+                                    <input
+                                        type="checkbox"
+                                        name="itens[{{ $i }}][na_mala]"
+                                        value="1"
+                                        class="form-checkbox rounded text-green-600"
+                                        {{ $item->na_mala ? 'checked' : '' }}
+                                    />
+
+                                    <span class="text-sm text-gray-700">
+                                        Já coloquei
+                                    </span>
+
+                                </label>
+
+                            </div>
+
                             {{-- REMOVER --}}
-                            <div class="w-full lg:w-auto">
+                            <div class="w-full xl:w-auto">
 
                                 <button
                                     type="button"
-                                    class="btn btn-danger btn-sm remove-item-mala w-full lg:w-auto"
+                                    class="btn btn-danger btn-sm remove-item-mala w-full xl:w-auto"
                                     title="Remover item"
                                 >
                                     <i class="bi bi-x-lg"></i>
@@ -213,136 +286,6 @@
                 </button>
 
             </div>
-
-            {{-- PRESENTES --}}
-            @if($mala->presentes && $mala->presentes->count())
-
-                <div class="mt-8">
-
-                    <div class="flex items-center mb-4">
-
-                        <i class="bi bi-gift text-pink-500 mr-2"></i>
-
-                        <span class="text-base font-semibold text-gray-700">
-                            Presentes nesta Mala
-                        </span>
-
-                    </div>
-
-                    {{-- MOBILE --}}
-                    <div class="block lg:hidden space-y-3">
-
-                        @foreach(
-                            $mala->presentes->groupBy('amigo.nome')
-                            as $nomeAmigo => $presentes
-                        )
-
-                            <div class="border rounded-xl p-4 bg-gray-50">
-
-                                <div class="font-semibold text-gray-800 mb-3">
-                                    {{ $nomeAmigo }}
-                                </div>
-
-                                <div class="flex flex-wrap gap-2">
-
-                                    @foreach($presentes as $presente)
-
-                                        <span class="
-                                            px-2 py-1 rounded-lg text-xs font-medium
-                                            {{ $presente->entregue
-                                                ? 'bg-green-100 text-green-700'
-                                                : 'bg-yellow-100 text-yellow-700'
-                                            }}
-                                        ">
-
-                                            {{ $presente->presente }}
-
-                                        </span>
-
-                                    @endforeach
-
-                                </div>
-
-                            </div>
-
-                        @endforeach
-
-                    </div>
-
-                    {{-- DESKTOP --}}
-                    <div class="hidden lg:block rounded-xl border border-gray-200 overflow-x-auto">
-
-                        <table class="w-full text-sm min-w-[600px]">
-
-                            <thead class="bg-gray-100">
-
-                                <tr>
-
-                                    <th class="text-left px-4 py-3 font-semibold text-gray-700">
-                                        Pessoa
-                                    </th>
-
-                                    <th class="text-left px-4 py-3 font-semibold text-gray-700">
-                                        Presentes
-                                    </th>
-
-                                </tr>
-
-                            </thead>
-
-                            <tbody>
-
-                                @foreach(
-                                    $mala->presentes->groupBy('amigo.nome')
-                                    as $nomeAmigo => $presentes
-                                )
-
-                                    <tr class="border-t">
-
-                                        <td class="
-                                            px-4 py-3 font-medium text-gray-800
-                                            align-top whitespace-nowrap
-                                        ">
-                                            {{ $nomeAmigo }}
-                                        </td>
-
-                                        <td class="px-4 py-3 text-gray-700">
-
-                                            <div class="flex flex-wrap gap-2">
-
-                                                @foreach($presentes as $presente)
-
-                                                    <span class="
-                                                        px-2 py-1 rounded-lg text-xs font-medium
-                                                        {{ $presente->entregue
-                                                            ? 'bg-green-100 text-green-700'
-                                                            : 'bg-yellow-100 text-yellow-700'
-                                                        }}
-                                                    ">
-
-                                                        {{ $presente->presente }}
-
-                                                    </span>
-
-                                                @endforeach
-
-                                            </div>
-
-                                        </td>
-
-                                    </tr>
-
-                                @endforeach
-
-                            </tbody>
-
-                        </table>
-
-                    </div>
-
-                </div>
-
-            @endif
 
             {{-- SALVAR --}}
             <button
@@ -386,35 +329,15 @@
                 div.className = `
                     rounded-xl border border-gray-200
                     bg-gray-50 p-4
-                    flex flex-col lg:flex-row lg:items-end
+                    flex flex-col xl:flex-row xl:items-end
                     gap-4 item-mala-item relative shadow-sm
                 `;
 
-                let selectPessoa = `
-                    <div class="w-full lg:w-64">
+                let options = pessoas.map(function(pessoa) {
 
-                        <label class="block text-xs font-medium text-gray-600 mb-1">
-                            Pessoa
-                        </label>
+                    return `<option value="${pessoa.id}">${pessoa.nome}</option>`;
 
-                        <select
-                            name="itens[\${itemIndex}][pessoa_id]"
-                            class="form-control w-full"
-                            required
-                        >
-
-                            <option value="">
-                                Selecione
-                            </option>
-
-                            \${pessoas.map(
-                                p => `<option value="\${p.id}">\${p.nome}</option>`
-                            ).join('')}
-
-                        </select>
-
-                    </div>
-                `;
+                }).join('');
 
                 div.innerHTML = `
 
@@ -426,7 +349,7 @@
 
                         <input
                             type="text"
-                            name="itens[\${itemIndex}][item]"
+                            name="itens[${itemIndex}][item]"
                             class="form-control w-full"
                             placeholder="Nome do item"
                             required
@@ -434,13 +357,58 @@
 
                     </div>
 
-                    \${selectPessoa}
+                    <div class="w-full xl:w-64">
 
-                    <div class="w-full lg:w-auto">
+                        <label class="block text-xs font-medium text-gray-600 mb-1">
+                            Pessoa
+                        </label>
+
+                        <select
+                            name="itens[${itemIndex}][pessoa_id]"
+                            class="form-control w-full"
+                            required
+                        >
+
+                            <option value="">
+                                Selecione
+                            </option>
+
+                            ${options}
+
+                        </select>
+
+                    </div>
+
+                    <div class="w-full xl:w-auto">
+
+                        <label class="inline-flex items-center space-x-2">
+
+                            <input
+                                type="hidden"
+                                name="itens[${itemIndex}][na_mala]"
+                                value="0"
+                            />
+
+                            <input
+                                type="checkbox"
+                                name="itens[${itemIndex}][na_mala]"
+                                value="1"
+                                class="form-checkbox rounded text-green-600"
+                            />
+
+                            <span class="text-sm text-gray-700">
+                                Já coloquei
+                            </span>
+
+                        </label>
+
+                    </div>
+
+                    <div class="w-full xl:w-auto">
 
                         <button
                             type="button"
-                            class="btn btn-danger btn-sm remove-item-mala w-full lg:w-auto"
+                            class="btn btn-danger btn-sm remove-item-mala w-full xl:w-auto"
                             title="Remover item"
                         >
                             <i class="bi bi-x-lg"></i>
