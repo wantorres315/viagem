@@ -24,7 +24,7 @@ def twaManifest = [
     applicationId: 'com.wanmotta.viagem.twa',
     hostName: 'viagem.wanmotta.com', // The domain being opened in the TWA.
     launchUrl: '/', // The start path for the TWA. Must be relative to the domain.
-    name: 'viagem', // The application name.
+    name: 'viagem wan', // The application name.
     launcherName: 'viagem', // The name shown on the Android Launcher.
     themeColor: '#FFFFFF', // The color used for the status bar.
     themeColorDark: '#000000', // The color used for the dark status bar.
