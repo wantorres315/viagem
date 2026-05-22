@@ -29,6 +29,7 @@
         "@fullcalendar/list": "^6.1.19",
         "@fullcalendar/timegrid": "^6.1.19",
         "@popperjs/core": "^2.11.8",
+        "@vite-pwa/nuxt": "^1.1.1",
         "alpinejs": "^3.14.9",
         "apexcharts": "^5.3.5",
         "flatpickr": "^4.6.13",
