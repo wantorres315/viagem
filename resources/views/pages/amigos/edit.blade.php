@@ -291,7 +291,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 <select
                     name="presentes[\${presenteIndex}][mala_id]"
                     class="form-control w-full"
-                    required
                 >
 
                     <option value="">
