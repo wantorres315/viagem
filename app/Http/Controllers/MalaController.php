@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Mala;
+use App\Models\Viagem;
 
 use Illuminate\Http\Request;
 
@@ -11,7 +12,16 @@ class MalaController extends Controller
     public function index()
     {
         // Exibe a lista de viagens do usuário
-        $malas = auth()->user()->viagens()->malas()->latest()->get(); 
+        $viagemAtual = Viagem::where('user_id', auth()->id())
+            ->where('data_ida', '>=', now()->toDateString())
+            ->orderBy('data_ida')
+            ->with(['itinerarios.passeios.pessoas', 'pessoas'])
+            ->first();
+        $malas = collect();
+         if($viagemAtual) {
+            $malas = $viagemAtual->malas()->get();
+        } 
+        
         return view('pages.malas.index', compact('malas'));
     }
 

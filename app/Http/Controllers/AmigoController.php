@@ -4,12 +4,22 @@ namespace App\Http\Controllers;
 
 use App\Models\Amigo;
 use Illuminate\Http\Request;
+use App\Models\Viagem;
 
 class AmigoController extends Controller
 {
     public function index()
     {
-        $amigos = auth()->user()->viagens()->with('amigos')->get();
+        $viagemAtual = Viagem::where('user_id', auth()->id())
+            ->where('data_ida', '>=', now()->toDateString())
+            ->orderBy('data_ida')
+            ->with(['itinerarios.passeios.pessoas', 'pessoas'])
+            ->first();
+        $amigos = collect();
+         if($viagemAtual) {
+            $amigos = $viagemAtual->amigos()->get();
+        } 
+        
         return view('pages.amigos.index', compact('amigos'));
     }
 
