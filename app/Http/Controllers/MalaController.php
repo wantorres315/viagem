@@ -11,7 +11,7 @@ class MalaController extends Controller
     public function index()
     {
         // Exibe a lista de viagens do usuário
-        $malas = Mala::all();
+        $malas = auth()->user()->viagens()->malas()->latest()->get(); 
         return view('pages.malas.index', compact('malas'));
     }
 

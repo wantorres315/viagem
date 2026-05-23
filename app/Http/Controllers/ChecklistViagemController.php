@@ -11,7 +11,7 @@ class ChecklistViagemController extends Controller
     public function index(Request $request)
     {
         $viagemId = $request->input('viagem_id') ?? Viagem::first()?->id;
-        $viagens = Viagem::all();
+        $viagens = auth()->user()->viagens()->get();
         $checklists = ChecklistViagem::where('viagem_id', $viagemId)->get();
         return view('pages.checklist.index', compact('checklists', 'viagens', 'viagemId'));
     }
