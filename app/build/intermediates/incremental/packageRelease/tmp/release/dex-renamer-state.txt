@@ -1,0 +1,4 @@
+#Fri May 22 19:33:56 WEST 2026
+base.0=C\:\\laragon\\www\\viagem\\app\\build\\intermediates\\dex\\release\\minifyReleaseWithR8\\classes.dex
+renamed.0=classes.dex
+path.0=classes.dex

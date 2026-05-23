@@ -15,14 +15,25 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $totalViagens = Viagem::where("user_id", auth()->user()->id)->count();
-        $totalPessoas = Pessoa::count();
-        $totalAmigos = Amigo::count();
-        $totalMalas = Mala::count();
-        $totalPasseios = Passeio::count();
-        $totalPresentes = Presente::count();
-        $totalChecklist = ChecklistViagem::count();
-        $totalChecklistConcluido = ChecklistViagem::where('concluido', true)->count();
+        $user = auth()->user();
+        $totalViagens = $user->viagens()->count();
+        $totalPessoas = 0;  
+        $totalAmigos =0;
+        $totalMalas = 0;
+        $totalPasseios = 0;
+        $totalPresentes = 0;
+        $totalChecklist = 0;
+        $totalChecklistConcluido = 0;
+        foreach ($user->viagens as $viagem) {
+            $totalPessoas += $viagem->pessoas()->count();
+            $totalAmigos += $viagem->amigos()->count();
+            $totalMalas += $viagem->malas()->count();
+            $totalPasseios += $viagem->itinerarios()->withCount('passeios')->get()->sum('passeios_count');
+            $totalPresentes += $viagem->amigos()->withCount('presentes')->get()->sum('presentes_count');
+            $totalChecklist += $viagem->checklist()->count();
+            $totalChecklistConcluido += $viagem->checklist()->where('concluido', true)->count();
+        }
+       
 
         // Buscar a próxima viagem do usuário
         $viagemAtual = Viagem::where('user_id', auth()->id())

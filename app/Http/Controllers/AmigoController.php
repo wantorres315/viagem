@@ -9,13 +9,13 @@ class AmigoController extends Controller
 {
     public function index()
     {
-        $amigos = Amigo::all();
+        $amigos = auth()->user()->viagens()->with('amigos')->get();
         return view('pages.amigos.index', compact('amigos'));
     }
 
     public function create()
     {
-        $viagens = \App\Models\Viagem::all();
+        $viagens = auth()->user()->viagens()->get();
         return view('pages.amigos.create', compact('viagens'));
     }
 

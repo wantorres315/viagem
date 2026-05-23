@@ -30,4 +30,9 @@ class Pessoa extends Model
     {
         return $this->hasMany(Documento::class);
     }
+
+    public function presentes()
+    {
+        return $this->hasMany(Presente::class);
+    }
 }

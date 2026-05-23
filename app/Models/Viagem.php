@@ -22,8 +22,7 @@ class Viagem extends Model
     {
         return $this->belongsTo(User::class);
     }
-        // Relacionamento: uma viagem tem muitas pessoas
-    public function pessoas()
+     public function pessoas()
     {
         return $this->hasMany(Pessoa::class);
     }
