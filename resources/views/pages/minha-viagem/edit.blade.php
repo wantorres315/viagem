@@ -29,8 +29,27 @@
                             <div class="rounded-xl border border-gray-200 bg-gray-50 p-4 flex flex-col gap-4 itinerario-item relative shadow-sm">
                                 <div class="flex flex-col md:flex-row md:items-end gap-4">
                                     <div class="flex-1">
-                                        <label class="block text-xs font-medium text-gray-600 mb-1">Nome</label>
-                                        <input type="text" name="itinerarios[{{ $i }}][nome]" class="form-control w-full" placeholder="Nome do itinerário" value="{{ $itinerario['nome'] ?? '' }}" required />
+                                           <label class="block text-xs font-medium text-gray-600 mb-1">Itinerário</label>
+                                           <div class="w-full px-3 py-2 bg-gray-100 rounded border border-gray-200 text-gray-700">
+                                               @if(!empty($itinerario['data']))
+                                                   @php
+                                                       $data = $itinerario['data'];
+                                                       $dataFormatada = \Carbon\Carbon::parse($data)->format('d/m/Y');
+                                                       $dias = [
+                                                           'Monday'    => 'Segunda-feira',
+                                                           'Tuesday'   => 'Terça-feira',
+                                                           'Wednesday' => 'Quarta-feira',
+                                                           'Thursday'  => 'Quinta-feira',
+                                                           'Friday'    => 'Sexta-feira',
+                                                           'Saturday'  => 'Sábado',
+                                                           'Sunday'    => 'Domingo',
+                                                       ];
+                                                       $diaSemana = $dias[\Carbon\Carbon::parse($data)->format('l')] ?? '';
+                                                   @endphp
+                                                   <span class="text-xs text-gray-500">Data: {{ $dataFormatada }} ({{ $diaSemana }})</span>
+                                               @endif
+                                           </div>
+                                           
                                     </div>
                                     <div class="flex-1">
                                         <label class="block text-xs font-medium text-gray-600 mb-1">Descrição</label>
@@ -224,8 +243,9 @@
                     div.innerHTML = `
                         <div class=\"flex flex-col md:flex-row md:items-end gap-4\">
                             <div class=\"flex-1\">
-                                <label class=\"block text-xs font-medium text-gray-600 mb-1\">Nome</label>
-                                <input type=\"text\" name=\"itinerarios[${itinerarioIndex}][nome]\" class=\"form-control w-full\" placeholder=\"Nome do itinerário\" required />
+                                   <label class=\"block text-xs font-medium text-gray-600 mb-1\">Itinerário</label>
+                                   <div class=\"w-full px-3 py-2 bg-gray-100 rounded border border-gray-200 text-gray-700\" data-itinerario-nome></div>
+                                   <span class=\"text-xs text-gray-500\" data-itinerario-data></span>
                             </div>
                             <div class=\"flex-1\">
                                 <label class=\"block text-xs font-medium text-gray-600 mb-1\">Descrição</label>
