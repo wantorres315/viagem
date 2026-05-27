@@ -31,6 +31,8 @@
                                     <div class="flex-1">
                                            <label class="block text-xs font-medium text-gray-600 mb-1">Itinerário</label>
                                            <div class="w-full px-3 py-2 bg-gray-100 rounded border border-gray-200 text-gray-700">
+                                               {{ $itinerario['nome'] ?? '' }}
+                                               <input type="hidden" name="itinerarios[{{ $i }}][nome]" value="{{ $itinerario['nome'] ?? '' }}">
                                                @if(!empty($itinerario['data']))
                                                    @php
                                                        $data = $itinerario['data'];
@@ -59,9 +61,7 @@
                                         <label class="block text-xs font-medium text-gray-600 mb-1">Data</label>
                                         <input type="date" name="itinerarios[{{ $i }}][data]" class="form-control w-full" placeholder="Data" value="{{ $itinerario['data'] ?? '' }}" />
                                     </div>
-                                    <button type="button" class="btn btn-danger btn-sm remove-itinerario md:mb-0 md:ml-2 mt-2 md:mt-0 self-end md:self-auto" title="Remover itinerário">
-                                        <i class="bi bi-x-lg"></i>
-                                    </button>
+                                    <!-- Botão de remover itinerário removido para impedir exclusão -->
                                 </div>
                                 <!-- Passeios dentro do itinerário -->
                                 <div class="mt-4">
@@ -104,9 +104,7 @@
                             </div>
                         @endforeach
                     </div>
-                    <button type="button" class="btn btn-primary btn-sm mt-3" id="add-itinerario">
-                        <i class="bi bi-plus"></i> Adicionar Itinerário
-                    </button>
+                    <!-- Botão de adicionar itinerário removido para impedir inclusão após criação -->
                 </div>
                     <div class="flex items-center mb-2">
                         <i class="bi bi-people-fill text-brand-500 mr-2"></i>
@@ -235,46 +233,8 @@
                <script>
                 // Itinerarios
                 let itinerariosList = document.getElementById('itinerarios-list');
-                let addItinerarioBtn = document.getElementById('add-itinerario');
-                let itinerarioIndex = itinerariosList.querySelectorAll('.itinerario-item').length;
-                addItinerarioBtn.addEventListener('click', function() {
-                    const div = document.createElement('div');
-                    div.className = 'rounded-xl border border-gray-200 bg-gray-50 p-4 flex flex-col gap-4 itinerario-item relative shadow-sm';
-                    div.innerHTML = `
-                        <div class=\"flex flex-col md:flex-row md:items-end gap-4\">
-                            <div class=\"flex-1\">
-                                   <label class=\"block text-xs font-medium text-gray-600 mb-1\">Itinerário</label>
-                                   <div class=\"w-full px-3 py-2 bg-gray-100 rounded border border-gray-200 text-gray-700\" data-itinerario-nome></div>
-                                   <span class=\"text-xs text-gray-500\" data-itinerario-data></span>
-                            </div>
-                            <div class=\"flex-1\">
-                                <label class=\"block text-xs font-medium text-gray-600 mb-1\">Descrição</label>
-                                <input type=\"text\" name=\"itinerarios[${itinerarioIndex}][descricao]\" class=\"form-control w-full\" placeholder=\"Descrição\" />
-                            </div>
-                            <div class=\"flex-1\">
-                                <label class=\"block text-xs font-medium text-gray-600 mb-1\">Data</label>
-                                <input type=\"date\" name=\"itinerarios[${itinerarioIndex}][data]\" class=\"form-control w-full\" placeholder=\"Data\" />
-                            </div>
-                            <button type=\"button\" class=\"btn btn-danger btn-sm remove-itinerario md:mb-0 md:ml-2 mt-2 md:mt-0 self-end md:self-auto\" title=\"Remover itinerário\"><i class=\"bi bi-x-lg\"></i></button>
-                        </div>
-                        <!-- Passeios dentro do itinerário -->
-                        <div class=\"mt-4\">
-                            <div class=\"flex items-center mb-2\">
-                                <i class=\"bi bi-map text-brand-500 mr-2\"></i>
-                                <span class=\"text-sm font-semibold text-gray-700\">Passeios</span>
-                            </div>
-                            <div class=\"passeios-list space-y-3\"></div>
-                            <button type=\"button\" class=\"btn btn-outline-primary btn-sm mt-2 add-passeio\" data-itinerario=\"${itinerarioIndex}\"><i class=\"bi bi-plus\"></i> Adicionar Passeio</button>
-                        </div>
-                    `;
-                    itinerariosList.appendChild(div);
-                    itinerarioIndex++;
-                });
-                itinerariosList.addEventListener('click', function(e) {
-                    if (e.target.classList.contains('remove-itinerario') || e.target.closest('.remove-itinerario')) {
-                        e.target.closest('.itinerario-item').remove();
-                    }
-                });
+                // Função de adicionar itinerário removida para impedir inclusão após criação
+                // Função de remoção de itinerário removida para impedir exclusão após criação
 
                 // Passeios dinâmicos
                 itinerariosList.addEventListener('click', function(e) {
@@ -283,6 +243,20 @@
                         const passeiosList = itinerarioDiv.querySelector('.passeios-list');
                         let passeioIndex = passeiosList.querySelectorAll('.passeio-item').length;
                         const itinerarioIdx = e.target.getAttribute('data-itinerario');
+                        // Garante que o campo hidden do nome existe e está preenchido
+                        let nomeLabel = itinerarioDiv.querySelector('[data-itinerario-nome]');
+                        let nomeHidden = itinerarioDiv.querySelector(`input[name="itinerarios[${itinerarioIdx}][nome]"]`);
+                        // Se o label estiver vazio, tenta buscar o valor do input hidden já existente
+                        let nomeValor = nomeLabel && nomeLabel.textContent.trim() ? nomeLabel.textContent.trim() : (nomeHidden ? nomeHidden.value : '');
+                        if (!nomeHidden) {
+                            nomeHidden = document.createElement('input');
+                            nomeHidden.type = 'hidden';
+                            nomeHidden.name = `itinerarios[${itinerarioIdx}][nome]`;
+                            nomeHidden.value = nomeValor;
+                            nomeLabel && nomeLabel.insertAdjacentElement('afterend', nomeHidden);
+                        } else {
+                            nomeHidden.value = nomeValor;
+                        }
                         const passeioDiv = document.createElement('div');
                         passeioDiv.className = 'rounded-lg border border-gray-200 bg-white p-3 flex flex-col md:flex-row md:items-end gap-2 passeio-item relative';
                         passeioDiv.innerHTML = `
