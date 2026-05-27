@@ -17,10 +17,11 @@
 
         @endif
 
-        <form method="POST" action="{{ route('mala.update', $mala->id) }}">
+        <form method="POST" action="{{ route('mala.update', $mala->id) }}" enctype="multipart/form-data">
 
             @csrf
             @method('PUT')
+            
 
             {{-- VIAGEM --}}
             <div class="relative z-20 bg-transparent mb-4">
@@ -285,6 +286,32 @@
                     Adicionar Item
                 </button>
 
+            </div>
+
+            {{-- FOTOS DA MALA --}}
+            <div class="mb-6">
+                <label class="block text-xs font-medium text-gray-600 mb-1">Fotos da Mala</label>
+                <input type="file" name="fotos[]" multiple class="form-control w-full mb-2" accept="image/*">
+                @if($mala->fotos && count($mala->fotos))
+                    <table class="w-full mt-2 border" style="border-collapse:collapse;">
+                        <thead>
+                            <tr>
+                                <th class="border px-2 py-1">Foto</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        @foreach($mala->fotos as $foto)
+                            <tr>
+                                <td class="border px-2 py-2 text-center">
+                                    <a href="{{ asset('storage/' . $foto->caminho) }}" target="_blank">
+                                        <img src="{{ asset('storage/' . $foto->caminho) }}" alt="Foto da mala" style="max-width:260px; max-height:260px; border-radius:8px; border:1px solid #aaa; margin-bottom:4px;">
+                                    </a>
+                                </td>
+                            </tr>
+                        @endforeach
+                        </tbody>
+                    </table>
+                @endif
             </div>
 
             {{-- SALVAR --}}

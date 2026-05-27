@@ -2,6 +2,7 @@
 // Exemplo de estrutura, ajuste conforme os relacionamentos reais
 @endphp
 <div class="bg-white p-6 rounded-xl shadow">
+
     <h2 class="text-xl font-bold mb-2">Dados da Viagem</h2>
     <p><strong>Nome:</strong> {{ $viagem->nome }}</p>
     <p><strong>Data:</strong> {{ $viagem->data_ida }} até {{ $viagem->data_volta }}</p>
@@ -73,18 +74,38 @@
     </ul>
     <hr class="my-4">
     <h3 class="font-semibold text-lg mb-2">Malas</h3>
-    <ul class="ml-4">
+    <div class="ml-4">
         @foreach($viagem->malas as $mala)
-            <li class="font-semibold">{{ $mala->descricao }}
-                <ul class="ml-4 list-disc" style="border-bottom:1px solid #eee; padding-bottom:10px; margin-bottom:10px;">
+            <div class="font-semibold">{{ $mala->descricao }}
+                <div class="ml-4" style="border-bottom:1px solid #eee; padding-bottom:10px; margin-bottom:10px;">
                     @foreach($mala->itens as $item)
-                        <li>{{ $item->nome }}</li>
+                        <div style="display:flex;align-items:center;gap:4px;">
+                            @if($item->na_mala)
+                                <span style="color:green;font-size:1.2em;">&#10003;</span>
+                            @endif
+                            <span>{{ $item->item }}</span>
+                        </div>
                     @endforeach
                     @foreach($mala->presentes as $presente)
-                        <li>{{ $presente->amigo->nome ?? '-' }} - {{ $presente->presente }}</li>
+                        <div>{{ $presente->amigo->nome ?? '-' }} - {{ $presente->presente }}</div>
                     @endforeach
-                </ul>
-            </li>
+                    @if($mala->fotos && count($mala->fotos))
+                        <div class="mt-2">
+                            <table class="w-auto" style="border-collapse:collapse;">
+                                <tbody>
+                                @foreach($mala->fotos as $foto)
+                                    <tr>
+                                        <td class="px-2 py-2 text-center">
+                                            <img src="{{ asset('storage/' . $foto->caminho) }}" alt="Foto da mala" style="max-width:220px; max-height:220px; border-radius:8px; border:1px solid #aaa;">
+                                        </td>
+                                    </tr>
+                                @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    @endif
+                </div>
+            </div>
         @endforeach
-    </ul>
+    </div>
 </div>

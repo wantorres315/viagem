@@ -111,7 +111,20 @@ class MalaController extends Controller
 
     $mala->viagem_id = $data['viagem'];
 
+
     $mala->save();
+
+    // Salvar fotos enviadas
+    if ($request->hasFile('fotos')) {
+        foreach ($request->file('fotos') as $foto) {
+            if ($foto->isValid()) {
+                $path = $foto->store('malas', 'public');
+                $mala->fotos()->create([
+                    'caminho' => $path,
+                ]);
+            }
+        }
+    }
 
     /*
     |--------------------------------------------------------------------------
@@ -218,6 +231,9 @@ class MalaController extends Controller
     | REDIRECT
     |--------------------------------------------------------------------------
     */
+
+    // Carregar fotos para exibir na tela
+    $mala->load('fotos');
 
     return redirect()
         ->route('mala.edit', $mala->id)

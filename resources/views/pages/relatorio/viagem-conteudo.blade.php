@@ -240,50 +240,46 @@
         @foreach($viagem->malas as $mala)
 
             <li class="font-semibold">
-
                 {{ $mala->descricao }}
-
                 <ul
-                    class="ml-4 list-disc"
-                    style="
-                        border-bottom:1px solid #eee;
-                        padding-bottom:10px;
-                        margin-bottom:10px;
-                    "
+                    class="ml-4"
+                    style="border-bottom:1px solid #eee; padding-bottom:10px; margin-bottom:10px; list-style:none;"
                 >
-
                     {{-- ITENS --}}
                     @foreach($mala->itens as $item)
-
-                        <li>
-                            {{ $item->nome }}
+                        <li style="display:flex;align-items:center;gap:4px;">
+                            @if($item->na_mala)
+                                <span style="color:green;font-size:1.2em;">&#10003;</span>
+                            @endif
+                            <span>{{ $item->item }}</span>
                         </li>
-
                     @endforeach
-
                     {{-- PRESENTES --}}
                     @foreach($mala->presentes as $presente)
-
                         <li>
-
-                            {{ $presente->amigo->nome ?? '-' }}
-                            -
-                            {{ $presente->presente }}
-
+                            {{ $presente->amigo->nome ?? '-' }} - {{ $presente->presente }}
                             @if($presente->entregue)
-
-                                <span style="color:green;">
-                                    (entregue)
-                                </span>
-
+                                <span style="color:green;">(entregue)</span>
                             @endif
-
                         </li>
-
                     @endforeach
-
+                    {{-- FOTOS --}}
+                    @if($mala->fotos && count($mala->fotos))
+                        <li class="mt-2" style="list-style:none;">
+                            <table class="w-auto" style="border-collapse:collapse;">
+                                <tbody>
+                                @foreach($mala->fotos as $foto)
+                                    <tr>
+                                        <td class="px-2 py-2 text-center">
+                                            <img src="{{ public_path('storage/' . $foto->caminho) }}" alt="Foto da mala" style="max-width:220px; max-height:220px; border-radius:8px; border:1px solid #aaa;">
+                                        </td>
+                                    </tr>
+                                @endforeach
+                                </tbody>
+                            </table>
+                        </li>
+                    @endif
                 </ul>
-
             </li>
 
         @endforeach

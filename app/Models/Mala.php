@@ -29,4 +29,9 @@ class Mala extends Model
     {
         return $this->hasMany(Presente::class);
     }
+
+    public function fotos()
+    {
+        return $this->hasMany(MalaFoto::class, 'mala_id');
+    }
 }
