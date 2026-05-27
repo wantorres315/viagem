@@ -1,6 +1,19 @@
 @php
 // Exemplo de estrutura, ajuste conforme os relacionamentos reais
 @endphp
+<style>
+@media print {
+  img.foto-pdf {
+    max-width: 350px !important;
+    max-height: 350px !important;
+    border-radius: 10px !important;
+    border: 2px solid #666 !important;
+    margin: 10px auto !important;
+    display: block !important;
+    page-break-inside: avoid !important;
+  }
+}
+</style>
 
 <div class="bg-white p-6 rounded-xl shadow">
 
@@ -184,13 +197,7 @@
                                     <img
                                         src="{{ public_path('storage/' . $doc->foto) }}"
                                         alt="Foto documento"
-                                        style="
-                                            max-width:200px;
-                                            max-height:200px;
-                                            border:2px solid #666;
-                                            border-radius:10px;
-                                            margin-top:6px;
-                                        "
+                                        class="foto-pdf"
                                     >
 
                                 @endif
@@ -271,8 +278,7 @@
                                 @foreach($mala->fotos as $foto)
                                     <tr>
                                         <td class="px-2 py-2 text-center">
-                                            <img src="{{ public_path('storage/' . $foto->caminho) }}" alt="Foto da mala" style="max-width:220px; max-height:220px; border-radius:8px; border:1px solid #aaa;">
-                                        </td>
+                                                <img src="{{ public_path('storage/' . $foto->caminho) }}" alt="Foto da mala" class="foto-pdf">
                                     </tr>
                                 @endforeach
                                 </tbody>

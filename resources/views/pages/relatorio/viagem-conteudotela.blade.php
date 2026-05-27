@@ -96,7 +96,7 @@
                                 @foreach($mala->fotos as $foto)
                                     <tr>
                                         <td class="px-2 py-2 text-center">
-                                            <img src="{{ asset('storage/' . $foto->caminho) }}" alt="Foto da mala" style="max-width:220px; max-height:220px; border-radius:8px; border:1px solid #aaa;">
+                                            <img src="{{ asset('storage/' . $foto->caminho) }}" alt="Foto da mala" style="max-width:350px; max-height:350px; border-radius:10px; border:2px solid #666; margin:10px auto; display:block;">
                                         </td>
                                     </tr>
                                 @endforeach
