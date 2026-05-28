@@ -48,8 +48,8 @@
 
     @foreach($viagem->itinerarios as $itinerario)
 
-        <div class="mb-2">
 
+        <div class="mb-2">
             <div
                 style="
                     background:#e3f2fd;
@@ -63,77 +63,57 @@
                 {{ \Carbon\Carbon::parse($itinerario->data)->format('d/m/Y') }}
             </div>
 
-            <ul class="ml-4 list-disc">
-
-                @foreach($itinerario->passeios as $passeio)
-
-                    <li class="mb-2 pb-2">
-
-                        {{ $passeio->nome }}
-
-                        (
-                        Adulto:
-                        R$ {{ number_format($passeio->valor_adulto,2,',','.') }},
-
-                        Criança:
-                        R$ {{ number_format($passeio->valor_crianca,2,',','.') }}
-                        )
-
-                        {{-- PESSOAS --}}
-                        <ul class="ml-4 list-square text-sm">
-
-                            @foreach($viagem->pessoas as $pessoa)
-
-                                <li>
-
-                                    {{ $pessoa->nome }}:
-
-                                    @if($pessoa->idade >= 12)
-
-                                        R$
-                                        {{ number_format($passeio->valor_adulto,2,',','.') }}
-                                        (adulto)
-
-                                    @else
-
-                                        R$
-                                        {{ number_format($passeio->valor_crianca,2,',','.') }}
-                                        (criança)
-
-                                    @endif
-
-                                </li>
-
-                            @endforeach
-
-                        </ul>
-
-                        {{-- AMIGOS --}}
-                        @if($passeio->amigos && $passeio->amigos->count())
-
-                            <div class="mt-1 text-xs text-blue-700">
-
-                                <strong>
-                                    Amigos neste passeio:
-                                </strong>
-
-                                {{ $passeio->amigos->pluck('nome')->join(', ') }}
-
-                            </div>
-
-                        @endif
-
-                        <hr
-                            class="my-2"
-                            style="border-top:1px solid #bbb;"
-                        >
-
-                    </li>
-
-                @endforeach
-
-            </ul>
-
+            @if(count($itinerario->passeios))
+                <ul class="ml-4 list-disc">
+                    @foreach($itinerario->passeios as $passeio)
+                        <li class="mb-2 pb-2">
+                            {{ $passeio->nome }}
+                            (
+                            Adulto:
+                            R$ {{ number_format($passeio->valor_adulto,2,',','.') }},
+                            Criança:
+                            R$ {{ number_format($passeio->valor_crianca,2,',','.') }}
+                            )
+                            {{-- PESSOAS --}}
+                            <ul class="ml-4 list-square text-sm">
+                                @foreach($viagem->pessoas as $pessoa)
+                                    <li>
+                                        {{ $pessoa->nome }}:
+                                        @if($pessoa->idade >= 12)
+                                            R$
+                                            {{ number_format($passeio->valor_adulto,2,',','.') }}
+                                            (adulto)
+                                        @else
+                                            R$
+                                            {{ number_format($passeio->valor_crianca,2,',','.') }}
+                                            (criança)
+                                        @endif
+                                    </li>
+                                @endforeach
+                            </ul>
+                            {{-- AMIGOS --}}
+                            @if($passeio->amigos && $passeio->amigos->count())
+                                <div class="mt-1 text-xs text-blue-700">
+                                    <strong>
+                                        Amigos neste passeio:
+                                    </strong>
+                                    {{ $passeio->amigos->pluck('nome')->join(', ') }}
+                                </div>
+                            @endif
+                            <hr
+                                class="my-2"
+                                style="border-top:1px solid #bbb;"
+                            >
+                        </li>
+                    @endforeach
+                </ul>
+            @else
+                <div style="height: 80px; border: 1px dashed #bbb; margin: 10px 0 20px 0; border-radius: 6px; background: #f8fafc;">
+                    @for($i=0;$i<4;$i++)
+                        <div style="border-bottom:1px dotted #ccc; height:18px; margin:0 20px;"></div>
+                    @endfor
+                </div>
+            @endif
         </div>
 
     @endforeach
