@@ -29,9 +29,15 @@
 
     <p>
         <strong>Data:</strong>
-        {{ $viagem->data_ida }}
+        {{ \Carbon\Carbon::parse($viagem->data_ida)->format('d/m/Y') }}
+        <span style="color: #888; font-size: 0.95em;">
+            ({{ \Carbon\Carbon::parse($viagem->data_ida)->locale('pt_BR')->isoFormat('dddd') }})
+        </span>
         até
-        {{ $viagem->data_volta }}
+        {{ \Carbon\Carbon::parse($viagem->data_volta)->format('d/m/Y') }}
+        <span style="color: #888; font-size: 0.95em;">
+            ({{ \Carbon\Carbon::parse($viagem->data_volta)->locale('pt_BR')->isoFormat('dddd') }})
+        </span>
     </p>
 
     <p>
@@ -61,6 +67,9 @@
                 "
             >
                 {{ \Carbon\Carbon::parse($itinerario->data)->format('d/m/Y') }}
+                <span style="color: #888; font-size: 0.95em;">
+                    ({{ \Carbon\Carbon::parse($itinerario->data)->locale('pt_BR')->isoFormat('dddd') }})
+                </span>
             </div>
 
             @if(count($itinerario->passeios))
